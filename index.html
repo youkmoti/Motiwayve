@@ -5,44 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MOTIWAYVE</title>
     <style>
-        /* 기본 스타일 초기화 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body, html { height: 100%; overflow: hidden; font-family: sans-serif; background-color: #000; }
+        body, html { 
+            height: 100%; 
+            overflow: hidden; 
+            font-family: sans-serif; 
+            background-color: #000; 
+        }
         
         /* 비디오 배경 스타일 */
         #bg-video {
-            position: fixed; right: 0; bottom: 0;
-            min-width: 100%; min-height: 100%;
-            z-index: -1; filter: brightness(40%); /* 로고와 버튼 가독성을 위한 명도 조절 */
-            object-fit: cover; /* 화면 비율 유지하면서 전체 채우기 */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -1;
+            transform: translate(-50%, -50%);
+            filter: brightness(40%);
+            object-fit: cover;
         }
         
-        /* 콘텐츠 레이아웃 */
         .container {
-            height: 100%; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; color: white; text-align: center;
+            height: 100%; 
+            display: flex; 
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center; 
+            color: white; 
+            text-align: center;
+            position: relative; /* 영상 위에 확실히 뜨도록 설정 */
+            z-index: 1;
         }
 
-        /* 로고 스타일 */
         .logo {
             width: 200px;
             height: auto;
             margin-bottom: 30px;
         }
 
-        /* 버튼 영역 */
         .links { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
         .btn {
-            padding: 12px 30px; border: 1px solid rgba(255,255,255,0.5); color: white;
-            text-decoration: none; border-radius: 5px; transition: 0.3s;
-            background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);
-            font-size: 0.9rem; letter-spacing: 1px;
+            padding: 12px 30px; 
+            border: 1px solid rgba(255,255,255,0.5); 
+            color: white;
+            text-decoration: none; 
+            border-radius: 5px; 
+            transition: 0.3s;
+            background: rgba(255,255,255,0.05); 
+            backdrop-filter: blur(10px);
+            font-size: 0.9rem; 
+            letter-spacing: 1px;
         }
         .btn:hover { background: white; color: black; border-color: white; }
     </style>
 </head>
 <body>
-    <video autoplay muted loop playsinline id="bg-video">
+    <video autoplay muted loop playsinline preload="auto" id="bg-video">
         <source src="background.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
