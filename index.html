@@ -5,29 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MOTIWAYVE</title>
     <style>
+        /* 기본 스타일 초기화 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body, html { height: 100%; overflow: hidden; font-family: sans-serif; background-color: #000; }
         
-        /* 배경 컨테이너 */
-        .video-background {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; pointer-events: none; overflow: hidden;
+        /* 비디오 배경 스타일 */
+        #bg-video {
+            position: fixed; right: 0; bottom: 0;
+            min-width: 100%; min-height: 100%;
+            z-index: -1; filter: brightness(40%); /* 로고와 버튼 가독성을 위한 명도 조절 */
+            object-fit: cover; /* 화면 비율 유지하면서 전체 채우기 */
         }
-        /* API로 생성될 영상 스타일 */
-        #player {
-            position: absolute; top: 50%; left: 50%;
-            width: 100vw; height: 100vh;
-            transform: translate(-50%, -50%);
-            filter: brightness(40%);
-        }
-        @media (min-aspect-ratio: 16/9) { #player { height: 56.25vw; } }
-        @media (max-aspect-ratio: 16/9) { #player { width: 177.78vh; } }
-
+        
+        /* 콘텐츠 레이아웃 */
         .container {
             height: 100%; display: flex; flex-direction: column;
             justify-content: center; align-items: center; color: white; text-align: center;
         }
-        .logo { width: 200px; height: auto; margin-bottom: 30px; }
+
+        /* 로고 스타일 */
+        .logo {
+            width: 200px;
+            height: auto;
+            margin-bottom: 30px;
+        }
+
+        /* 버튼 영역 */
         .links { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
         .btn {
             padding: 12px 30px; border: 1px solid rgba(255,255,255,0.5); color: white;
@@ -39,58 +42,19 @@
     </style>
 </head>
 <body>
-    <div class="video-background">
-        <div id="player"></div>
-    </div>
+    <video autoplay muted loop playsinline id="bg-video">
+        <source src="background.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
 
     <div class="container">
         <img src="logo.png" alt="MOTIWAYVE LOGO" class="logo">
+        
         <div class="links">
             <a href="https://www.instagram.com/본인계정" class="btn" target="_blank">INSTAGRAM</a>
             <a href="https://www.youtube.com/본인채널" class="btn" target="_blank">YOUTUBE</a>
             <a href="mailto:본인이메일@gmail.com" class="btn">EMAIL</a>
         </div>
     </div>
-
-    <script>
-        var tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-        var player;
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player', {
-                videoId: 'X1CSrYYXg9c', // 질문자님의 영상 ID
-                playerVars: {
-                    'autoplay': 1,
-                    'mute': 1,
-                    'loop': 1,
-                    'playlist': 'X1CSrYYXg9c',
-                    'controls': 0,
-                    'showinfo': 0,
-                    'rel': 0,
-                    'iv_load_policy': 3,
-                    'enablejsapi': 1,
-                    'origin': window.location.origin
-                },
-                events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange
-                }
-            });
-        }
-
-        function onPlayerReady(event) {
-            event.target.playVideo();
-        }
-
-        function onPlayerStateChange(event) {
-            // 영상이 끝나면 다시 재생 (무한 반복 강제화)
-            if (event.data === YT.PlayerState.ENDED) {
-                player.playVideo();
-            }
-        }
-    </script>
 </body>
 </html>
