@@ -14,7 +14,6 @@
             background-color: black;
         }
 
-        /* 영상을 상단 좌측 기점으로 고정하고 화면을 채움 */
         #bg-video {
             position: fixed;
             top: 0;
@@ -25,7 +24,6 @@
             height: auto;
             z-index: -1;
             object-fit: cover;
-            /* 영상의 윗부분이 기준이 되도록 설정 */
             object-position: top center; 
         }
 
@@ -38,7 +36,6 @@
             width: 100%;
         }
 
-        /* 수정한 로고 이미지 설정 (100px 반영) */
         .logo-img {
             width: 100px; 
             height: auto;
@@ -75,13 +72,12 @@
 <body>
 
     <video autoplay muted loop playsinline preload="auto" id="bg-video">
-        <source src="videos/background.mp4" type="video/mp4">
+        <source src="background.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
 
     <div class="container">
         <img src="logo.png" alt="Motiwayve Logo" class="logo-img">
-        
         <div class="btn-group">
             <a href="https://www.instagram.com/motiwayve.ssixx" target="_blank" class="nav-btn">INSTAGRAM</a>
         </div>
