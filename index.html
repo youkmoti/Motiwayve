@@ -28,46 +28,50 @@
         }
 
         .header-left { display: flex; align-items: center; flex-shrink: 0; }
-        .header-logo { width: auto; height: 28px; margin-right: 8px; }
-        .header-title { font-weight: bold; font-size: 1rem; letter-spacing: 0.5px; color: #000; white-space: nowrap; }
+        .header-logo { width: auto; height: 24px; margin-right: 8px; }
+        /* 브랜드명 크기 조정 */
+        .header-title { font-weight: bold; font-size: 0.95rem; letter-spacing: 0.5px; color: #000; white-space: nowrap; }
         
-        .divider { width: 1px; height: 14px; background-color: #ddd; margin: 0 12px; flex-shrink: 0; }
+        /* 메인 구분선 (로고와 메뉴 사이) */
+        .main-divider { width: 1px; height: 14px; background-color: #ddd; margin: 0 15px; flex-shrink: 0; }
 
+        /* 메뉴 영역 */
         nav { 
             display: flex; 
+            align-items: center;
             overflow-x: auto; 
             white-space: nowrap; 
-            -webkit-overflow-scrolling: touch; 
             scrollbar-width: none;
         }
         nav::-webkit-scrollbar { display: none; }
 
+        /* 메뉴 글자 및 사이 구분선 스타일 */
         nav a {
             text-decoration: none; color: #444;
-            font-size: 0.85rem; margin-left: 15px;
+            font-size: 0.9rem; /* 메뉴 글자 크기 확대 */
             font-weight: 500; transition: 0.3s;
             flex-shrink: 0;
+            display: flex;
+            align-items: center;
         }
         nav a:hover { color: #000; }
 
-        /* 메인 영상 섹션: 모바일에서 잘리지 않도록 구조 변경 */
-        #main-visual {
-            padding: 0;
-            width: 100%;
-            /* 데스크톱에서는 전체 화면(100vh), 모바일에서는 영상 비율에 따라 자동 조절 */
-            height: auto; 
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            background-color: #000;
-            padding-top: 60px; /* 헤더 높이만큼 여백 */
+        /* 메뉴 사이 세로 라인 (화이트/연그레이) */
+        .menu-divider {
+            width: 1px;
+            height: 10px;
+            background-color: #eee; /* 완전 화이트보다 가독성을 위해 아주 연한 그레이 사용 */
+            margin: 0 12px;
+            flex-shrink: 0;
         }
 
-        #bg-video {
-            width: 100%;
-            height: auto; /* 높이를 고정하지 않고 가로에 맞춤 */
-            display: block;
+        /* 메인 영상 섹션 */
+        #main-visual {
+            padding: 0; width: 100%; height: auto; min-height: 100vh;
+            display: flex; align-items: center; background-color: #000;
+            padding-top: 60px;
         }
+        #bg-video { width: 100%; height: auto; display: block; }
 
         /* 섹션 공통 스타일 */
         section { padding: 100px 10%; min-height: 50vh; border-bottom: 1px solid #f5f5f5; }
@@ -89,23 +93,20 @@
         .empty-page { padding: 60px 0; color: #bbb; font-style: italic; }
 
         .contact-info { margin-top: 30px; font-size: 1rem; }
-        .contact-info p { margin: 12px 0; }
-        .contact-info a { color: #000; text-decoration: none; border-bottom: 1px solid #ddd; transition: 0.3s; }
+        .contact-info a { color: #000; text-decoration: none; border-bottom: 1px solid #ddd; }
 
         footer { padding: 50px; text-align: center; font-size: 0.8rem; color: #aaa; }
 
-        /* 모바일 대응 (가로 맞춤 핵심) */
+        /* 모바일 대응 */
         @media (max-width: 768px) {
-            #main-visual {
-                min-height: auto; /* 모바일에서 억지로 100vh를 채우지 않음 */
-                height: auto;
-            }
-            #bg-video {
-                width: 100%;
-                height: auto;
-                object-fit: contain; /* 영상 전체가 다 보이도록 설정 */
-            }
-            header { padding: 0 15px; height: 55px; }
+            #main-visual { min-height: auto; height: auto; }
+            #bg-video { width: 100%; height: auto; object-fit: contain; }
+            header { padding: 0 12px; height: 55px; }
+            .header-logo { height: 20px; }
+            .header-title { font-size: 0.85rem; } /* 브랜드명 더 축소 */
+            .main-divider { margin: 0 10px; }
+            nav a { font-size: 0.85rem; } /* 메뉴 글자 비율 맞춤 */
+            .menu-divider { margin: 0 8px; }
             section { padding: 60px 20px; }
         }
     </style>
@@ -117,10 +118,12 @@
             <img src="logo_header.png" alt="Motiwayve Logo" class="header-logo">
             <span class="header-title">MOTIWAYVE</span>
         </div>
-        <div class="divider"></div>
+        <div class="main-divider"></div>
         <nav>
             <a href="#about">About</a>
+            <div class="menu-divider"></div>
             <a href="#project">Project</a>
+            <div class="menu-divider"></div>
             <a href="#contact">Contact</a>
         </nav>
     </header>
