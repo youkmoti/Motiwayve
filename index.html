@@ -5,45 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Motiwayve</title>
     <style>
+        /* 배경을 화이트로 변경 */
         body, html {
             margin: 0;
             padding: 0;
             width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: black;
+            background-color: white;
+            font-family: sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* 영상 설정: 화면 가로에 꽉 차고 세로는 비율에 맞춰 조절 */
+        .video-wrapper {
+            width: 100%;
+            line-height: 0; /* 영상 하단 미세 여백 제거 */
         }
 
         #bg-video {
-            position: fixed;
-            top: 0;
-            left: 0;
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
+            width: 100%;
             height: auto;
-            z-index: -1;
-            object-fit: cover;
-            object-position: top center; 
+            display: block;
         }
 
-        .container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+        /* 로고와 버튼을 담는 컨테이너: 영상 아래에 위치 */
+        .content-container {
+            padding: 3rem 1rem;
             text-align: center;
-            width: 100%;
-            z-index: 10;
+            background-color: white;
         }
 
         .logo-img {
             width: 100px; 
             height: auto;
-            margin-bottom: 2rem;
+            margin: 0 auto 2rem auto;
             display: block;
-            margin-left: auto;
-            margin-right: auto;
         }
 
         .btn-group {
@@ -51,32 +46,34 @@
             justify-content: center;
         }
 
+        /* 버튼 디자인: 배경이 화이트이므로 블랙/그레이 톤으로 변경 */
         .nav-btn {
             padding: 12px 35px;
             font-size: 0.9rem;
-            color: white;
+            color: black;
             text-decoration: none;
-            border: 1px solid white;
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(5px);
+            border: 1px solid black;
+            background: transparent;
             transition: 0.3s;
             cursor: pointer;
             letter-spacing: 2px;
         }
 
         .nav-btn:hover {
-            background: white;
-            color: black;
+            background: black;
+            color: white;
         }
     </style>
 </head>
 <body>
 
-    <video id="bg-video" autoplay muted loop playsinline preload="auto">
-        <source src="https://motiwayve.com/background.mp4" type="video/mp4">
-    </video>
+    <div class="video-wrapper">
+        <video id="bg-video" autoplay muted loop playsinline preload="auto">
+            <source src="https://motiwayve.com/background.mp4" type="video/mp4">
+        </video>
+    </div>
 
-    <div class="container">
+    <div class="content-container">
         <img src="logo.png" alt="Motiwayve Logo" class="logo-img">
         <div class="btn-group">
             <a href="https://www.instagram.com/motiwayve.ssixx" target="_blank" class="nav-btn">INSTAGRAM</a>
@@ -84,12 +81,16 @@
     </div>
 
     <script>
+        // 모바일 자동 재생 보완 스크립트
         document.addEventListener('DOMContentLoaded', function() {
             const video = document.getElementById('bg-video');
-            video.play().catch(error => {
-                console.log("Auto-play blocked, retrying muted...");
-                video.muted = true;
-                video.play();
+            
+            // 1. 즉시 재생 시도
+            video.play().catch(() => {
+                // 2. 실패 시(모바일 절전 등), 사용자가 화면 어디든 터치하면 재생 시작
+                document.body.addEventListener('touchstart', function() {
+                    video.play();
+                }, { once: true });
             });
         });
     </script>
