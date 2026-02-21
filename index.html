@@ -6,14 +6,6 @@
     <title>Motiwayve</title>
     <style>
         body, html {
-            margin: 0;<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Motiwayve</title>
-    <style>
-        body, html {
             margin: 0;
             padding: 0;
             width: 100%;
@@ -80,9 +72,8 @@
 </head>
 <body>
 
-    <video id="bg-video" autoplay muted loop playsinline crossorigin="anonymous">
+    <video id="bg-video" autoplay muted loop playsinline preload="auto">
         <source src="https://motiwayve.com/background.mp4" type="video/mp4">
-        Your browser does not support the video tag.
     </video>
 
     <div class="container">
@@ -93,105 +84,15 @@
     </div>
 
     <script>
-        // 일부 브라우저에서 자동 재생이 막히는 현상을 방지하기 위한 강제 실행 스크립트
-        window.onload = function() {
+        document.addEventListener('DOMContentLoaded', function() {
             const video = document.getElementById('bg-video');
-            
-            // 영상 재생을 시도하고, 실패 시 콘솔에 기록합니다.
-            const playPromise = video.play();
-            
-            if (playPromise !== undefined) {
-                playPromise.then(_ => {
-                    console.log("Automatic playback started!");
-                }).catch(error => {
-                    console.log("Auto-play was prevented. Attempting fallback...");
-                    // 브라우저가 자동 재생을 막은 경우, 음소거 상태를 다시 확인하고 재생 시도
-                    video.muted = true;
-                    video.play();
-                });
-            }
-        };
+            video.play().catch(error => {
+                console.log("Auto-play blocked, retrying muted...");
+                video.muted = true;
+                video.play();
+            });
+        });
     </script>
 
 </body>
 </html>
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: black;
-        }
-
-        #bg-video {
-            position: fixed;
-            top: 0;
-            left: 0;
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            z-index: -1;
-            object-fit: cover;
-            object-position: top center; 
-        }
-
-        .container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            width: 100%;
-            z-index: 10;
-        }
-
-        .logo-img {
-            width: 100px; 
-            height: auto;
-            margin-bottom: 2rem;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .btn-group {
-            display: flex;
-            justify-content: center;
-        }
-
-        .nav-btn {
-            padding: 12px 35px;
-            font-size: 0.9rem;
-            color: white;
-            text-decoration: none;
-            border: 1px solid white;
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(5px);
-            transition: 0.3s;
-            cursor: pointer;
-            letter-spacing: 2px;
-        }
-
-        .nav-btn:hover {
-            background: white;
-            color: black;
-        }
-    </style>
-</head>
-<body>
-
-    <video autoplay muted loop playsinline preload="auto" id="bg-video">
-        <source src="https://motiwayve.com/background.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-
-    <div class="container">
-        <img src="logo.png" alt="Motiwayve Logo" class="logo-img">
-        <div class="btn-group">
-            <a href="https://www.instagram.com/motiwayve.ssixx" target="_blank" class="nav-btn">INSTAGRAM</a>
-        </div>
-    </div>
-
-</body>
-</html>
-
