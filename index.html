@@ -3,94 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Motiwayve</title>
+    <title>MOTIWAYVE</title>
     <style>
-        /* 배경을 화이트로 변경 */
+        /* 기본 설정 */
+        html { scroll-behavior: smooth; }
         body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            background-color: white;
-            font-family: sans-serif;
-            overflow-x: hidden;
+            margin: 0; padding: 0;
+            width: 100%; background-color: white;
+            font-family: 'Pretendard', sans-serif;
+            color: #333; line-height: 1.6;
         }
 
-        /* 영상 설정: 화면 가로에 꽉 차고 세로는 비율에 맞춰 조절 */
-        .video-wrapper {
-            width: 100%;
-            line-height: 0; /* 영상 하단 미세 여백 제거 */
+        /* 헤더 설정 (투명도 70% 화이트) */
+        header {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 70px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            display: flex; align-items: center;
+            padding: 0 5%; box-sizing: border-box;
+            z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.05);
         }
 
+        .header-logo-group { display: flex; align-items: center; }
+        .header-logo { width: 30px; height: auto; margin-right: 10px; }
+        .header-title { font-weight: bold; font-size: 1.1rem; letter-spacing: 1px; margin-right: 20px; }
+        
+        /* 세로 구분선 */
+        .divider { width: 1px; height: 20px; background-color: #ccc; margin-right: 20px; }
+
+        nav a {
+            text-decoration: none; color: #333;
+            font-size: 0.9rem; margin-right: 25px;
+            font-weight: 500; transition: 0.3s;
+        }
+        nav a:hover { color: #000; }
+
+        /* 섹션 공통 스타일 */
+        section { padding: 100px 10%; min-height: 60vh; border-bottom: 1px solid #eee; }
+
+        /* 메인 영상 섹션 */
+        #main-visual {
+            padding: 0; height: 100vh; position: relative;
+            overflow: hidden; display: flex; align-items: center; justify-content: center;
+        }
         #bg-video {
-            width: 100%;
-            height: auto;
-            display: block;
+            width: 100%; height: 100%; object-fit: cover;
         }
 
-        /* 로고와 버튼을 담는 컨테이너: 영상 아래에 위치 */
-        .content-container {
-            padding: 3rem 1rem;
-            text-align: center;
-            background-color: white;
+        /* About 섹션 */
+        #about { text-align: center; background-color: #fff; }
+        .about-logo { width: 120px; margin-bottom: 30px; }
+        .about-title { font-size: 1.5rem; font-weight: bold; margin-bottom: 20px; color: #000; }
+        .about-text { 
+            max-width: 800px; margin: 0 auto; 
+            white-space: pre-line; word-break: keep-all; color: #555;
         }
 
-        .logo-img {
-            width: 100px; 
-            height: auto;
-            margin: 0 auto 2rem auto;
-            display: block;
-        }
+        /* Project 섹션 */
+        #project { background-color: #fafafa; text-align: center; }
+        .empty-page { padding: 100px 0; color: #aaa; font-style: italic; }
 
-        .btn-group {
-            display: flex;
-            justify-content: center;
-        }
+        /* Contact 섹션 */
+        #contact { background-color: #fff; text-align: center; }
+        .contact-info { margin-top: 30px; font-size: 1.1rem; }
+        .contact-info a { color: #000; text-decoration: none; border-bottom: 1px solid #000; margin: 0 10px; }
 
-        /* 버튼 디자인: 배경이 화이트이므로 블랙/그레이 톤으로 변경 */
-        .nav-btn {
-            padding: 12px 35px;
-            font-size: 0.9rem;
-            color: black;
-            text-decoration: none;
-            border: 1px solid black;
-            background: transparent;
-            transition: 0.3s;
-            cursor: pointer;
-            letter-spacing: 2px;
-        }
-
-        .nav-btn:hover {
-            background: black;
-            color: white;
-        }
+        footer { padding: 50px; text-align: center; font-size: 0.8rem; color: #999; }
     </style>
 </head>
 <body>
 
-    <div class="video-wrapper">
-        <video id="bg-video" autoplay muted loop playsinline preload="auto">
+    <header>
+        <div class="header-logo-group">
+            <img src="logo.png" alt="Logo" class="header-logo">
+            <span class="header-title">MOTIWAYVE</span>
+        </div>
+        <div class="divider"></div>
+        <nav>
+            <a href="#about">About</a>
+            <a href="#project">Project</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </header>
+
+    <section id="main-visual">
+        <video id="bg-video" autoplay muted loop playsinline>
             <source src="https://motiwayve.com/background.mp4" type="video/mp4">
         </video>
-    </div>
+    </section>
 
-    <div class="content-container">
-        <img src="logo.png" alt="Motiwayve Logo" class="logo-img">
-        <div class="btn-group">
-            <a href="https://www.instagram.com/motiwayve.ssixx" target="_blank" class="nav-btn">INSTAGRAM</a>
+    <section id="about">
+        <img src="logo.png" alt="Motiwayve Logo" class="about-logo">
+        <div class="about-title">디지털로 구현되는 뉴미디어디자인</div>
+        <p class="about-text">
+            앱 / 게임 / 영상미디어 / 증강현실 AR / 가상현실 / 3D디자인 콘텐츠 및 미디어 기반 디자인 전문 업체로서, 
+            뉴미디어와 결부된 맞춤형 디자인과 솔루션을 창조합니다.
+
+            다양한 디지털 2D, 3D, 미디어 콘텐츠를 제작, 전시, 교육, 공공, 게임, 엔터테인먼트, 건축, 공간 등, 
+            대입 가능한 모든 현실분야에 결합, 가상과 현실이 결합된 새로운 콘텐츠를 탄생시킵니다. 
+            아날로그에서 그칠 수 있는 세상과 디지털콘텐츠를 융합하여 새롭게 창조된 현실을 체험해 보세요.
+        </p>
+    </section>
+
+    <section id="project">
+        <h2>PROJECT</h2>
+        <div class="empty-page">준비 중인 페이지입니다.</div>
+    </section>
+
+    <section id="contact">
+        <h2>CONTACT</h2>
+        <div class="contact-info">
+            <p>Email: <a href="mailto:youkksw2018@gmail.com">youkksw2018@gmail.com</a></p>
+            <p>Instagram: <a href="https://www.instagram.com/motiwayve.ssixx" target="_blank">@motiwayve.ssixx</a></p>
         </div>
-    </div>
+    </section>
+
+    <footer>
+        &copy; 2026 MOTIWAYVE. All rights reserved.
+    </footer>
 
     <script>
-        // 모바일 자동 재생 보완 스크립트
+        // 모바일 자동 재생 보완
         document.addEventListener('DOMContentLoaded', function() {
             const video = document.getElementById('bg-video');
-            
-            // 1. 즉시 재생 시도
             video.play().catch(() => {
-                // 2. 실패 시(모바일 절전 등), 사용자가 화면 어디든 터치하면 재생 시작
-                document.body.addEventListener('touchstart', function() {
-                    video.play();
-                }, { once: true });
+                document.body.addEventListener('touchstart', () => { video.play(); }, { once: true });
             });
         });
     </script>
