@@ -8,7 +8,7 @@
         html { scroll-behavior: smooth; }
         body, html {
             margin: 0; padding: 0;
-            width: 100%; background-color: #000; /* 영상 외 영역 블랙 처리 */
+            width: 100%; background-color: #000;
             font-family: 'Pretendard', sans-serif;
             color: #333; overflow-x: hidden;
         }
@@ -23,57 +23,45 @@
             z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.05);
             justify-content: space-between;
         }
-        .header-left { display: flex; align-items: center; }
-        .header-logo { height: 20px; margin-right: 8px; }
-        .header-title { font-weight: bold; font-size: 0.9rem; color: #000; }
-        nav { display: flex; align-items: center; }
-        nav a { text-decoration: none; color: #444; font-size: 0.85rem; font-weight: 500; }
-        .menu-divider { width: 1px; height: 10px; background-color: #ddd; margin: 0 12px; }
 
-        /* 메인 비주얼: 영상 비율 유지 및 그리드 일체화 */
+        /* 메인 비주얼: 가로 100% 꽉 채우기 */
         #main-visual {
             position: relative;
             width: 100%;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            /* 높이는 영상 비율에 맞춰 유동적으로 변화함 */
             background-color: #000;
-            padding-top: 60px; /* 헤더 여백 */
-            box-sizing: border-box;
+            margin-top: 60px; /* 헤더 공간만 확보 */
+            display: flex;
+            flex-direction: column;
         }
         
-        /* 영상 컨테이너: 영상의 실제 크기에 맞춰 그리드 레이어를 제한함 */
-        .video-container {
+        #video-wrapper {
             position: relative;
             width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            line-height: 0; /* 영상 하단 미세 간격 제거 */
         }
 
         #bg-video {
-            max-width: 100%;
-            max-height: 100%;
-            width: auto;
-            height: auto;
-            object-fit: contain; /* 비율 보존, 잘림 방지 */
+            width: 100%;
+            height: auto; /* 가로 기준으로 꽉 채우고 세로는 비율대로 */
+            display: block;
             z-index: 1;
         }
 
-        /* 그리드 오버레이: 영상의 '렌더링된 크기'에 맞춰 자바스크립트로 조절됨 */
+        /* 그리드 오버레이: 정확히 #bg-video와 동일한 크기로 일치 */
         #grid-overlay {
             position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: 5;
             pointer-events: none;
-            /* JS에서 영상 크기에 맞춰 width, height 할당 예정 */
+            overflow: hidden;
         }
 
         .grid-line {
             position: absolute;
-            background: rgba(255, 255, 255, 0.4); /* 라인 더 진하게 */
-            opacity: 0.2; /* 기본 가시성 강화 */
+            background: rgba(255, 255, 255, 0.5); /* 선명도 강화 */
+            opacity: 0.25;
         }
         .line-x { width: 100%; height: 1px; }
         .line-y { height: 100%; width: 1px; }
@@ -82,8 +70,8 @@
             position: absolute;
             font-family: 'Courier New', monospace;
             font-size: 9px;
-            color: rgba(255, 255, 255, 0.8); /* 텍스트 더 진하게 */
-            transition: opacity 0.2s; /* 속도 향상 */
+            color: rgba(255, 255, 255, 0.9);
+            transition: opacity 0.2s;
             opacity: 0;
             white-space: nowrap;
         }
@@ -95,7 +83,10 @@
             transform: translate(-50%, -50%);
         }
 
-        /* 인스타 버튼 */
+        /* 하단 섹션 및 인스타 스타일 보존 */
+        section:not(#main-visual) { padding: 100px 10%; text-align: center; background: #fff; }
+        .about-text { max-width: 800px; margin: 0 auto; white-space: pre-line; color: #555; }
+        
         #insta-float {
             position: fixed; bottom: 30px; right: 30px; z-index: 2000;
             background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(8px);
@@ -104,10 +95,12 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         #insta-float svg { width: 22px; height: 22px; fill: #333; }
-
-        section:not(#main-visual) { padding: 100px 10%; text-align: center; background: #fff; }
-        .about-text { max-width: 800px; margin: 0 auto; white-space: pre-line; color: #555; }
         footer { padding: 50px; text-align: center; font-size: 0.8rem; color: #aaa; background: #fff; }
+
+        @media (max-width: 768px) {
+            section:not(#main-visual) { padding: 60px 20px; }
+            #insta-float { bottom: 20px; right: 20px; width: 40px; height: 40px; }
+        }
     </style>
 </head>
 <body>
@@ -125,7 +118,7 @@
     </header>
 
     <section id="main-visual">
-        <div class="video-container" id="v-container">
+        <div id="video-wrapper">
             <video id="bg-video" autoplay muted loop playsinline>
                 <source src="https://motiwayve.com/background.mp4" type="video/mp4">
             </video>
@@ -167,34 +160,16 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const wrapper = document.getElementById('video-wrapper');
             const video = document.getElementById('bg-video');
             const overlay = document.getElementById('grid-overlay');
-            const keywords = ["NEWMEDIA", "AR", "VR", "AUGMENTED", "3D", "UI", "HMD", "DESIGN", "SYNC", "OS", "LIVE", "RENDER"];
+            const keywords = ["NEWMEDIA", "AR", "VR", "AUGMENTED", "3D", "UI", "HMD", "DESIGN", "SYNC", "OS", "RENDER"];
             
-            function syncGrid() {
-                // 영상이 화면에 실제로 렌더링된 크기를 계산
-                const videoRatio = video.videoWidth / video.videoHeight;
-                const containerRect = video.parentElement.getBoundingClientRect();
-                const containerRatio = containerRect.width / containerRect.height;
-
-                let actualW, actualH;
-                if (containerRatio > videoRatio) {
-                    actualH = containerRect.height;
-                    actualW = actualH * videoRatio;
-                } else {
-                    actualW = containerRect.width;
-                    actualH = actualW / videoRatio;
-                }
-
-                overlay.style.width = `${actualW}px`;
-                overlay.style.height = `${actualH}px`;
-
-                initGrid(actualW, actualH);
-            }
-
-            function initGrid(w, h) {
+            function initGrid() {
                 overlay.innerHTML = '';
-                let spacing = window.innerWidth > 768 ? 180 : 100;
+                const h = wrapper.offsetHeight;
+                const w = wrapper.offsetWidth;
+                let spacing = window.innerWidth > 768 ? 200 : 120;
 
                 for (let i = 0; i <= h; i += spacing) {
                     const line = document.createElement('div');
@@ -227,8 +202,8 @@
                     dataEl.className = 'grid-data';
                     const isRight = Math.random() > 0.5;
                     const isBottom = Math.random() > 0.5;
-                    dataEl.style.top = isBottom ? `${y + 6}px` : `${y - 16}px`;
-                    dataEl.style.left = isRight ? `${x + 6}px` : `${x - 40}px`;
+                    dataEl.style.top = isBottom ? `${y + 6}px` : `${y - 18}px`;
+                    dataEl.style.left = isRight ? `${x + 6}px` : `${x - 45}px`;
                     overlay.appendChild(dataEl);
                     startDataLoop(dataEl);
                 }
@@ -245,19 +220,22 @@
                         else {
                             let n = 0;
                             const t = setInterval(() => {
-                                n += 11; // 카운트업 속도 증가
-                                el.innerText = `ID:${n.toString().padStart(3,'0')}`;
-                                if(n >= 150) clearInterval(t);
-                            }, 30); // 점멸 속도 증가
+                                n += 15;
+                                el.innerText = `L:${n}%`;
+                                if(n >= 100) clearInterval(t);
+                            }, 25);
                         }
                     }
-                    setTimeout(update, 600 + Math.random() * 1500); // 전체 루프 속도 2배 향상
+                    setTimeout(update, 500 + Math.random() * 1000); // 더 빠른 점멸
                 };
                 update();
             }
 
-            video.onloadedmetadata = syncGrid;
-            window.addEventListener('resize', syncGrid);
+            // 영상 로드 완료 및 창 크기 조절 시 그리드 재설정
+            video.addEventListener('loadedmetadata', initGrid);
+            window.addEventListener('resize', initGrid);
+            // 초기 실행
+            initGrid();
         });
     </script>
 </body>
