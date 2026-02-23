@@ -7,46 +7,35 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* 기본 설정 */
         html { scroll-behavior: smooth; }
         body, html { margin: 0; padding: 0; width: 100%; background-color: #000; font-family: 'Noto Sans KR', sans-serif; overflow-x: hidden; }
 
-        /* 헤더: 레귤러 굵기 */
+        /* 헤더: 모바일 겹침 방지 최적화 */
         header {
             position: fixed; top: 0; left: 0; width: 100%; height: 60px;
             background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(15px);
-            display: flex; align-items: center; padding: 0 4%; box-sizing: border-box;
+            display: flex; align-items: center; padding: 0 5%; box-sizing: border-box;
             z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.05); justify-content: space-between;
         }
-        .header-left { display: flex; align-items: center; }
-        .header-logo { height: 20px; margin-right: 12px; }
-        .header-title { font-weight: 500; font-size: 1rem; color: #000; text-decoration: none; }
+        .header-left { display: flex; align-items: center; min-width: fit-content; }
+        .header-logo { height: 20px; margin-right: 8px; }
+        .header-title { font-weight: 500; font-size: 0.95rem; color: #000; text-decoration: none; white-space: nowrap; }
+        
         nav { display: flex; align-items: center; }
-        nav a { text-decoration: none; color: #333; font-size: 0.85rem; font-weight: 500; }
-        .menu-divider { width: 1px; height: 10px; background-color: #ccc; margin: 0 15px; }
+        nav a { text-decoration: none; color: #333; font-size: 0.8rem; font-weight: 500; white-space: nowrap; }
+        .menu-divider { width: 1px; height: 10px; background-color: #ccc; margin: 0 12px; }
 
-        /* 영상 영역: 절대 잘리지 않도록 설정 */
-        #main-visual { 
-            position: relative; 
-            width: 100%; 
-            padding-top: 60px; /* 헤더 높이만큼 여백 */
-            background: #000; 
-        }
-        #video-wrapper { 
-            position: relative; 
-            width: 100%; 
-            line-height: 0;
-        }
-        #bg-video { 
-            width: 100%; 
-            height: auto; /* 비율 유지하며 꽉 채움 (잘림 방지) */
-            display: block; 
-        }
+        /* 메인 비주얼: 잘림 방지 및 상단 밀착 */
+        #main-visual { position: relative; width: 100%; padding-top: 60px; background: #000; }
+        #video-wrapper { position: relative; width: 100%; line-height: 0; }
+        #bg-video { width: 100%; height: auto; display: block; }
 
-        /* 텍스트 가변 레이어 */
+        /* 텍스트 패널: 헤더와 겹치지 않도록 vh 기준 위치 설정 */
         #panel-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; pointer-events: none; }
         .fui-group {
             position: absolute;
-            top: 15%; left: 6%; 
+            top: 10vh; left: 6%; 
             display: flex; flex-direction: column; gap: 0.5vw;
         }
         .fui-line {
@@ -58,7 +47,7 @@
         }
         .fui-line.active { opacity: 1; transform: translateX(0); }
         .fui-text {
-            font-size: clamp(0.7rem, 2vw, 1.8rem);
+            font-size: clamp(0.75rem, 2vw, 1.8rem);
             font-weight: 500; color: #fff; line-height: 1.1; letter-spacing: -0.01em;
         }
         .fui-text .first-letter { color: #000; font-weight: 700; margin-right: 1px; }
@@ -67,41 +56,33 @@
         .bar { width: 2px; background: #fff; animation: equalize 0.5s infinite alternate ease-in-out; }
         @keyframes equalize { 0% { height: 20%; } 100% { height: 100%; } }
 
-        /* 우측 하단 고정 인스타 (헤더와 투명도 통일) */
+        /* 인스타 버튼: 헤더 투명도와 통일 */
         .fixed-insta {
             position: fixed; bottom: 30px; right: 30px; z-index: 1100;
             width: 45px; height: 45px; 
-            background: rgba(255, 255, 255, 0.75); /* 헤더와 동일 */
-            backdrop-filter: blur(15px);
-            color: #000;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            text-decoration: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
+            background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(15px);
+            color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            text-decoration: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: transform 0.3s;
         }
-        .fixed-insta:hover { transform: scale(1.1); }
 
-        #grid-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
-        .grid-line { position: absolute; background: rgba(255, 255, 255, 0.2); opacity: 0.15; }
-        .line-x { width: 100%; height: 1px; } .line-y { height: 100%; width: 1px; }
-
-        /* 모바일 대응 */
+        /* 모바일 최적화 */
         @media (max-width: 768px) {
-            header { padding: 0 15px; height: 55px; }
+            header { padding: 0 12px; height: 55px; }
+            .header-logo { height: 16px; margin-right: 5px; }
+            .header-title { font-size: 0.85rem; }
+            nav a { font-size: 0.75rem; }
+            .menu-divider { margin: 0 8px; }
+            
             #main-visual { padding-top: 55px; }
-            .fui-group { top: 12%; left: 5%; }
+            .fui-group { top: 8vh; left: 5%; }
             .fui-text { font-size: 3.2vw; }
             .fixed-insta { bottom: 20px; right: 20px; width: 40px; height: 40px; }
         }
 
-        /* 섹션 복구 */
+        /* 하단 섹션들 */
         section:not(#main-visual) { padding: 100px 10%; text-align: center; background: #fff; }
         .section-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 30px; color: #000; }
-        .section-text { 
-            max-width: 850px; margin: 0 auto; white-space: pre-line; 
-            color: #444; line-height: 1.9; word-break: keep-all; font-size: 1rem; 
-        }
-        .contact-link { display: inline-block; margin-top: 20px; color: #555; text-decoration: none; font-weight: 500; }
-
+        .section-text { max-width: 850px; margin: 0 auto; white-space: pre-line; color: #444; line-height: 1.9; word-break: keep-all; font-size: 1rem; }
         footer { padding: 40px; text-align: center; font-size: 0.8rem; color: #aaa; background: #fff; border-top: 1px solid #eee; }
     </style>
 </head>
@@ -120,7 +101,7 @@
     </header>
 
     <a href="https://www.instagram.com/motiwayve.ssixx" target="_blank" class="fixed-insta">
-        <i class="fab fa-instagram" style="font-size: 22px;"></i>
+        <i class="fab fa-instagram" style="font-size: 20px;"></i>
     </a>
 
     <section id="main-visual">
@@ -128,7 +109,6 @@
             <video id="bg-video" autoplay muted loop playsinline>
                 <source src="https://motiwayve.com/background.mp4" type="video/mp4">
             </video>
-            <div id="grid-overlay"></div>
             <div id="panel-container"></div>
         </div>
     </section>
@@ -153,8 +133,8 @@
 
     <section id="contact">
         <div class="section-title">CONTACT US</div>
-        <div style="font-weight:700; color:#000; font-size:1.1rem;">motiwayve@gmail.com</div>
-        <a href="https://www.instagram.com/motiwayve.ssixx" target="_blank" class="contact-link">
+        <div style="font-weight:700; color:#000; font-size:1.1rem; margin-bottom:10px;">motiwayve@gmail.com</div>
+        <a href="https://www.instagram.com/motiwayve.ssixx" target="_blank" style="color:#555; text-decoration:none;">
             <i class="fab fa-instagram"></i> @motiwayve.ssixx
         </a>
     </section>
@@ -162,10 +142,12 @@
     <footer>&copy; 2026 MOTIWAYVE. All rights reserved.</footer>
 
     <script>
+        // 1. 새로고침 시 최상단 강제 이동 및 해시 제거
+        if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+        window.scrollTo(0, 0);
+
         document.addEventListener('DOMContentLoaded', function() {
-            const wrapper = document.getElementById('video-wrapper');
             const panelContainer = document.getElementById('panel-container');
-            const overlay = document.getElementById('grid-overlay');
             const video = document.getElementById('bg-video');
             
             const typingData = [
@@ -173,19 +155,6 @@
                 ["3D ART / 3D Media", "2D Image Design", "Concept Design"],
                 ["Application", "Game", "Interactive ART"]
             ];
-
-            function initGrid() {
-                overlay.innerHTML = '';
-                const spacing = 160;
-                const h = wrapper.offsetHeight;
-                const w = wrapper.offsetWidth;
-                for (let i = 0; i <= h; i += spacing) {
-                    const l = document.createElement('div'); l.className='grid-line line-x'; l.style.top=`${i}px`; overlay.appendChild(l);
-                }
-                for (let j = 0; j <= w; j += spacing) {
-                    const l = document.createElement('div'); l.className='grid-line line-y'; l.style.left=`${j}px`; overlay.appendChild(l);
-                }
-            }
 
             let currentIdx = 0;
             function spawnLines() {
@@ -225,9 +194,8 @@
             }
 
             setInterval(spawnLines, 5500);
-            window.addEventListener('resize', initGrid);
-            video.addEventListener('loadedmetadata', () => { initGrid(); spawnLines(); });
-            if (video.readyState >= 1) { initGrid(); spawnLines(); }
+            video.addEventListener('loadedmetadata', spawnLines);
+            if (video.readyState >= 1) spawnLines();
         });
     </script>
 </body>
