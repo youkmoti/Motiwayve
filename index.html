@@ -48,8 +48,6 @@
             transition: opacity 0.5s, transform 0.5s; white-space: nowrap;
         }
         .fui-line.active { opacity: 1; transform: translateX(0); }
-        
-        /* 텍스트 띄어쓰기 유지 설정 */
         .fui-text { 
             font-size: clamp(0.75rem, 2vw, 1.8rem); 
             font-weight: 500; color: #fff; 
@@ -76,7 +74,7 @@
             .menu-divider { margin: 0 8px; }
             #main-visual { padding-top: 55px; }
             .fui-group { top: 10%; left: 5%; }
-            .fui-text { font-size: 3.2vw; }
+            .fui-text { font-size: 3.4vw; }
             .fixed-insta { bottom: 20px; right: 20px; width: 40px; height: 40px; }
         }
 
@@ -136,7 +134,7 @@
         <div style="font-size: 1.1rem; font-weight: 800; letter-spacing: 3px; margin-bottom: 40px;">CONTACT</div>
         <div style="margin-top: 30px; font-size: 1.1rem;">
             <p>Email: <a href="mailto:motiwayve@gmail.com" style="color:#000; text-decoration:none; font-weight:700; border-bottom:2px solid #eee;">motiwayve@gmail.com</a></p>
-            <p>Instagram: <a href="https://www.instagram.com/motiwayve.ssixx" target="_blank" style="color:#000; text-decoration:none; font-weight:700; border-bottom:2px solid #eee;">@motiwayve.ssixx</a></p>
+            <p><i class="fab fa-instagram" style="margin-right:5px; color:#555;"></i>Instagram: <a href="https://www.instagram.com/motiwayve.ssixx" target="_blank" style="color:#000; text-decoration:none; font-weight:700; border-bottom:2px solid #eee;">@motiwayve.ssixx</a></p>
         </div>
     </section>
 
@@ -219,7 +217,6 @@
                 update();
             }
 
-            // 요청하신 데이터 셋 (띄어쓰기 유지)
             const typingData = [
                 ["Augmented Reality", "Virtual Reality", "Extended Reality"],
                 ["3D ART / 3D Media", "2D Image Design", "Concept Design"],
@@ -237,7 +234,6 @@
                     line.className = 'fui-line';
                     const textSpan = document.createElement('span');
                     textSpan.className = 'fui-text';
-                    // 첫 글자 분리 및 내용 보존을 위해 textContent 초기화 준비
                     textSpan.innerHTML = `<span class="first-letter">${text.charAt(0)}</span><span class="rest"></span>`;
                     line.appendChild(textSpan);
                     if(i === linesData.length - 1) {
@@ -260,7 +256,7 @@
 
             function typeEffect(el, text) {
                 let i = 0;
-                el.textContent = ""; // 공백 유지용
+                el.textContent = ""; 
                 function type() { 
                     if (i < text.length) { 
                         el.textContent += text.charAt(i); 
