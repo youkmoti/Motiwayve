@@ -4,17 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MOTIWAYVE</title>
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Roboto:wght@700;900&display=swap" rel="stylesheet">
     <style>
         html { scroll-behavior: smooth; }
         body, html {
             margin: 0; padding: 0;
             width: 100%; background-color: #000;
-            font-family: 'Pretendard', sans-serif;
+            font-family: 'Noto Sans KR', sans-serif;
             color: #333; overflow-x: hidden;
         }
 
-        /* 헤더 고정 */
+        /* 헤더 스타일 고정 */
         header {
             position: fixed; top: 0; left: 0;
             width: 100%; height: 60px;
@@ -27,12 +27,12 @@
         }
         .header-left { display: flex; align-items: center; }
         .header-logo { height: 24px; margin-right: 10px; }
-        .header-title { font-weight: 800; font-size: 1rem; color: #000; text-decoration: none; }
+        .header-title { font-weight: 900; font-size: 1rem; color: #000; text-decoration: none; letter-spacing: -0.5px; }
         nav { display: flex; align-items: center; }
         nav a { text-decoration: none; color: #444; font-size: 0.9rem; font-weight: 600; }
         .menu-divider { width: 1px; height: 12px; background-color: #ddd; margin: 0 18px; }
 
-        /* 메인 비주얼 영역 */
+        /* 메인 영역 */
         #main-visual {
             position: relative; width: 100%;
             background-color: #000; padding-top: 60px;
@@ -41,49 +41,70 @@
         #video-wrapper { position: relative; width: 100%; line-height: 0; overflow: hidden; }
         #bg-video { width: 100%; height: auto; display: block; z-index: 1; }
         
-        /* [그리드 레이어 복구] */
+        /* 그리드 시스템 복구 유지 */
         #grid-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
         .grid-line { position: absolute; background: rgba(255, 255, 255, 0.5); opacity: 0.25; }
         .line-x { width: 100%; height: 1px; }
         .line-y { height: 100%; width: 1px; }
         .grid-data {
-            position: absolute; font-family: 'Courier New', monospace; font-size: 9px;
+            position: absolute; font-family: 'Roboto', sans-serif; font-size: 9px;
             color: rgba(255, 255, 255, 0.9); transition: opacity 0.2s; opacity: 0; white-space: nowrap;
         }
-        .grid-node {
-            position: absolute; font-size: 11px; color: rgba(255, 255, 255, 0.9);
-            transform: translate(-50%, -50%);
-        }
+        .grid-node { position: absolute; font-size: 11px; color: rgba(255, 255, 255, 0.9); transform: translate(-50%, -50%); }
 
-        /* [타이핑 패널 정돈] */
+        /* --- 이미지 기반 타이핑 패널 --- */
         #panel-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; pointer-events: none; }
         .fui-panel {
             position: absolute;
-            background: rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.2); /* 헤더와 비슷한 투명도 */
             backdrop-filter: blur(15px);
-            border-left: 4px solid #000;
-            padding: 15px 20px;
+            border-left: 6px solid #000; /* 이미지처럼 굵은 블랙 바 */
+            padding: 30px;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            transition: width 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+            justify-content: flex-start;
+            transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
             width: 0; overflow: hidden;
         }
         .fui-line {
-            font-size: 14px; font-weight: 700; color: #fff;
-            margin: 3px 0; opacity: 0; display: flex;
+            font-family: 'Roboto', 'Noto Sans KR', sans-serif;
+            font-size: 24px; /* 이미지 비례에 맞춘 크기 */
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 12px;
+            opacity: 0;
+            display: flex;
+            letter-spacing: -0.5px;
         }
-        .fui-line .first-letter { color: #000; margin-right: 2px; }
+        .fui-line .first-letter { color: #000; margin-right: 4px; }
         .fui-line.show { opacity: 1; }
 
+        /* 이퀄라이저 스타일 */
+        .equalizer {
+            position: absolute; bottom: 20px; right: 20px;
+            display: flex; align-items: flex-end; height: 30px; gap: 3px;
+            opacity: 0; transition: opacity 0.5s;
+        }
+        .equalizer.show { opacity: 1; }
+        .bar {
+            width: 4px; background: #000;
+            animation: equalize 0.5s infinite alternate ease-in-out;
+        }
+        @keyframes equalize {
+            0% { height: 5px; }
+            100% { height: 25px; }
+        }
+
         section:not(#main-visual) { padding: 100px 10%; text-align: center; background: #fff; }
-        footer { padding: 60px; text-align: center; font-size: 0.85rem; color: #bbb; background: #fff; }
+        .about-text { max-width: 850px; margin: 0 auto; white-space: pre-line; color: #555; line-height: 1.8; word-break: keep-all; }
+        footer { padding: 60px; text-align: center; font-size: 0.85rem; color: #bbb; background: #fff; border-top: 1px solid #f5f5f5; }
 
         @media (max-width: 768px) {
             header { height: 55px; }
-            #main-visual { padding-top: 55px; }
-            .fui-line { font-size: 11px; }
+            .fui-panel { padding: 15px; border-left-width: 4px; }
+            .fui-line { font-size: 16px; margin-bottom: 6px; }
+            .equalizer { height: 20px; bottom: 10px; right: 10px; }
         }
     </style>
 </head>
@@ -113,10 +134,14 @@
 
     <section id="about">
         <img src="logo.png" style="width:80px; margin-bottom:30px;">
-        <p class="about-text">앱 / 게임 / 영상미디어 전문 뉴미디어 디자인 그룹</p>
+        <div style="font-size:1.5rem; font-weight:900; margin-bottom:25px;">디지털로 구현되는 뉴미디어디자인</div>
+        <p class="about-text">
+            앱 / 게임 / 영상미디어 / 증강현실 AR / 가상현실 / 3D디자인 콘텐츠 및 미디어 기반 디자인 전문 업체로서, 
+            뉴미디어와 결부된 맞춤형 디자인과 솔루션을 창조합니다.
+        </p>
     </section>
 
-    <footer>&copy; 2026 MOTIWAYVE.</footer>
+    <footer>&copy; 2026 MOTIWAYVE. All rights reserved.</footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -125,6 +150,7 @@
             const overlay = document.getElementById('grid-overlay');
             const panelContainer = document.getElementById('panel-container');
             const keywords = ["NEWMEDIA", "AR", "VR", "SYNC", "OS", "3D", "UI"];
+            
             const typingData = [
                 ["Augmented Reality", "Virtual Reality", "Extended Reality"],
                 ["3D ART / 3D Media", "2D Image Design", "Concept Design"],
@@ -133,7 +159,7 @@
 
             const spacing = 160;
 
-            // [그리드 노드 및 데이터 루프 복구]
+            // [그리드 복구]
             function initGrid() {
                 overlay.innerHTML = '';
                 const h = wrapper.offsetHeight;
@@ -147,9 +173,7 @@
                     line.style.left = `${j}px`; overlay.appendChild(line);
                 }
                 for (let i = spacing; i < h; i += spacing) {
-                    for (let j = spacing; j < w; j += spacing) {
-                        createFUIDetails(i, j);
-                    }
+                    for (let j = spacing; j < w; j += spacing) { createFUIDetails(i, j); }
                 }
             }
 
@@ -177,35 +201,49 @@
                     const active = Math.random() > 0.5;
                     el.style.opacity = active ? 1 : 0;
                     if(active) {
-                        const r = Math.random();
-                        if(r > 0.5) el.innerText = keywords[Math.floor(Math.random()*keywords.length)];
-                        else el.innerText = `[${(Math.random()*1).toFixed(3)}]`;
+                        el.innerText = keywords[Math.floor(Math.random()*keywords.length)];
                     }
-                    setTimeout(update, 800 + Math.random() * 1500);
+                    setTimeout(update, 1000 + Math.random() * 2000);
                 };
                 update();
             }
 
-            // [패널 로직]
+            // [패널 생성 로직]
             let currentIdx = 0;
+
             function spawnPanel() {
                 panelContainer.innerHTML = '';
                 const panel = document.createElement('div');
                 panel.className = 'fui-panel';
+                
                 const vW = wrapper.offsetWidth;
                 const vH = wrapper.offsetHeight;
-                const targetW = vW * 0.28;
-                const targetH = vH / 4.5;
+                
+                // 크기: 영상의 약 1/4 (절반의 절반 느낌)
+                const targetW = vW * 0.35;
+                const targetH = vH / 3.5;
 
+                // 위치: 이미지처럼 왼쪽 상단 부근 고정 혹은 랜덤
                 const isRight = Math.random() > 0.5;
                 const isBottom = Math.random() > 0.5;
 
-                panel.style.top = isBottom ? 'auto' : '5%';
-                panel.style.bottom = isBottom ? '5%' : 'auto';
-                panel.style.left = isRight ? 'auto' : '5%';
-                panel.style.right = isRight ? '5%' : 'auto';
+                panel.style.top = isBottom ? 'auto' : '10%';
+                panel.style.bottom = isBottom ? '10%' : 'auto';
+                panel.style.left = isRight ? 'auto' : '8%';
+                panel.style.right = isRight ? '8%' : 'auto';
                 panel.style.height = `${targetH}px`;
-                if(isRight) panel.style.borderLeft = 'none', panel.style.borderRight = '4px solid #000';
+                if(isRight) panel.style.borderLeft = 'none', panel.style.borderRight = '6px solid #000';
+
+                // 이퀄라이저 추가
+                const eq = document.createElement('div');
+                eq.className = 'equalizer';
+                for(let b=0; b<5; b++){
+                    const bar = document.createElement('div');
+                    bar.className = 'bar';
+                    bar.style.animationDelay = `${b * 0.1}s`;
+                    eq.appendChild(bar);
+                }
+                panel.appendChild(eq);
 
                 const linesData = typingData[currentIdx % typingData.length];
                 linesData.forEach(text => {
@@ -218,24 +256,25 @@
 
                 setTimeout(() => { panel.style.width = `${targetW}px`; }, 100);
                 setTimeout(() => {
+                    eq.classList.add('show');
                     const lines = panel.querySelectorAll('.fui-line');
                     lines.forEach((line, idx) => {
                         setTimeout(() => {
                             line.classList.add('show');
                             typeEffect(line.querySelector('.rest-text'), linesData[idx].slice(1));
-                        }, idx * 400);
+                        }, idx * 500);
                     });
                     currentIdx++;
-                }, 800);
+                }, 900);
             }
 
             function typeEffect(el, text) {
                 let i = 0;
-                function type() { if (i < text.length) { el.innerText += text.charAt(i); i++; setTimeout(type, 30); } }
+                function type() { if (i < text.length) { el.innerText += text.charAt(i); i++; setTimeout(type, 40); } }
                 type();
             }
 
-            setInterval(spawnPanel, 5000);
+            setInterval(spawnPanel, 6000);
             video.addEventListener('loadedmetadata', () => { initGrid(); spawnPanel(); });
             window.addEventListener('resize', initGrid);
             initGrid();
