@@ -1,191 +1,49 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MOTIWAYVE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500;700&display=swap" rel="stylesheet">
-    <style>
-        html { scroll-behavior: smooth; }
-        body, html { margin: 0; padding: 0; width: 100%; background-color: #000; font-family: 'Noto Sans KR', sans-serif; overflow-x: hidden; }
+/* --- 박스 제거 및 개별 라인 배경 --- */
+#panel-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; pointer-events: none; }
+.fui-group {
+    position: absolute;
+    top: 12%; left: 6%; /* 웹 기준 위치: 약간 더 구석으로 */
+    display: flex;
+    flex-direction: column;
+    gap: 0.5vw; /* 줄 사이 간격도 비율로 */
+}
 
-        header {
-            position: fixed; top: 0; left: 0; width: 100%; height: 60px;
-            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(15px);
-            display: flex; align-items: center; padding: 0 4%; box-sizing: border-box;
-            z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.05); justify-content: space-between;
-        }
-        .header-title { font-weight: 700; font-size: 1rem; color: #000; text-decoration: none; }
-        nav { display: flex; align-items: center; }
-        nav a { text-decoration: none; color: #444; font-size: 0.9rem; font-weight: 700; }
-        .menu-divider { width: 1px; height: 12px; background-color: #ddd; margin: 0 12px; }
+.fui-line {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.2); /* 투명도 살짝 하향하여 영상 가림 최소화 */
+    backdrop-filter: blur(10px);
+    padding: 0.4vw 0.8vw; /* 웹 여백 최적화 */
+    border-radius: 2px;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: opacity 0.4s, transform 0.4s;
+    white-space: nowrap;
+}
 
-        #main-visual { position: relative; width: 100%; padding-top: 60px; background: #000; }
-        #video-wrapper { position: relative; width: 100%; line-height: 0; overflow: hidden; }
-        #bg-video { width: 100%; height: auto; display: block; }
+.fui-text {
+    font-size: 2.2vw; /* 웹에서 조금 더 잘 보이게 조정 */
+    font-weight: 500;
+    color: #fff;
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
 
-        #grid-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
-        .grid-line { position: absolute; background: rgba(255, 255, 255, 0.3); opacity: 0.2; }
-        .line-x { width: 100%; height: 1px; } .line-y { height: 100%; width: 1px; }
-        .grid-node { position: absolute; font-size: 10px; color: rgba(255, 255, 255, 0.5); transform: translate(-50%, -50%); }
-
-        /* --- 박스 제거 및 개별 라인 배경 --- */
-        #panel-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; pointer-events: none; }
-        .fui-group {
-            position: absolute;
-            top: 15%; left: 8%; /* 영상 내부 위치 */
-            display: flex;
-            flex-direction: column;
-            gap: 6px; /* 줄 사이 간격 */
-        }
-        .fui-line {
-            display: inline-flex;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(10px);
-            padding: 4px 8px; /* 텍스트 주변 5px 내외 여백 */
-            border-radius: 2px;
-            opacity: 0;
-            transform: translateX(-10px);
-            transition: opacity 0.4s, transform 0.4s;
-            white-space: nowrap;
-        }
-        .fui-line.active { opacity: 1; transform: translateX(0); }
-        
-        .fui-text {
-            font-size: 1.8vw; /* 철저히 영상 비율에 맞춤 */
-            font-weight: 500;
-            color: #fff;
-            line-height: 1;
-            letter-spacing: -0.02em;
-        }
-        .fui-text .first-letter { color: #000; font-weight: 700; }
-
-        /* 화이트 이퀄라이저 (마지막 줄 끝에 배치) */
-        .equalizer {
-            display: inline-flex; align-items: flex-end; height: 1.2vw; gap: 2px; margin-left: 10px;
-        }
-        .bar { width: 2px; background: #fff; animation: equalize 0.5s infinite alternate ease-in-out; }
-        @keyframes equalize { 0% { height: 20%; } 100% { height: 100%; } }
-
-        /* 모바일 비율 조정 */
-        @media (max-width: 768px) {
-            .fui-text { font-size: 4.5vw; }
-            .fui-group { top: 12%; left: 5%; }
-            .equalizer { height: 3vw; }
-        }
-
-        section:not(#main-visual) { padding: 80px 10%; text-align: center; background: #fff; }
-        footer { padding: 40px; text-align: center; font-size: 0.8rem; color: #ccc; }
-    </style>
-</head>
-<body>
-
-    <header>
-        <div class="header-left"><a href="#" class="header-title">MOTIWAYVE</a></div>
-        <nav>
-            <a href="#about">About</a><div class="menu-divider"></div>
-            <a href="#project">Project</a><div class="menu-divider"></div>
-            <a href="#contact">Contact</a>
-        </nav>
-    </header>
-
-    <section id="main-visual">
-        <div id="video-wrapper">
-            <video id="bg-video" autoplay muted loop playsinline>
-                <source src="https://motiwayve.com/background.mp4" type="video/mp4">
-            </video>
-            <div id="grid-overlay"></div>
-            <div id="panel-container"></div>
-        </div>
-    </section>
-
-    <section id="about">
-        <div style="font-size:1.2rem; font-weight:700;">NEW MEDIA DESIGN GROUP</div>
-    </section>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const wrapper = document.getElementById('video-wrapper');
-            const panelContainer = document.getElementById('panel-container');
-            const overlay = document.getElementById('grid-overlay');
-            const video = document.getElementById('bg-video');
-            
-            const typingData = [
-                ["Augmented Reality", "Virtual Reality", "Extended Reality"],
-                ["3D ART / 3D Media", "2D Image Design", "Concept Design"],
-                ["Application", "Game", "Interactive ART"]
-            ];
-
-            function initGrid() {
-                overlay.innerHTML = '';
-                const spacing = 160;
-                const h = wrapper.offsetHeight;
-                const w = wrapper.offsetWidth;
-                for (let i = 0; i <= h; i += spacing) {
-                    const l = document.createElement('div'); l.className='grid-line line-x'; l.style.top=`${i}px`; overlay.appendChild(l);
-                }
-                for (let j = 0; j <= w; j += spacing) {
-                    const l = document.createElement('div'); l.className='grid-line line-y'; l.style.left=`${j}px`; overlay.appendChild(l);
-                    for(let i=spacing; i<h; i+=spacing) {
-                        const n = document.createElement('div'); n.className='grid-node'; n.style.top=`${i}px`; n.style.left=`${j}px`; n.innerText='+'; overlay.appendChild(n);
-                    }
-                }
-            }
-
-            let currentIdx = 0;
-
-            function spawnLines() {
-                panelContainer.innerHTML = '';
-                const group = document.createElement('div');
-                group.className = 'fui-group';
-                
-                const linesData = typingData[currentIdx % typingData.length];
-                
-                linesData.forEach((text, i) => {
-                    const line = document.createElement('div');
-                    line.className = 'fui-line';
-                    
-                    const textSpan = document.createElement('span');
-                    textSpan.className = 'fui-text';
-                    textSpan.innerHTML = `<span class="first-letter">${text.charAt(0)}</span><span class="rest"></span>`;
-                    
-                    line.appendChild(textSpan);
-
-                    // 마지막 줄에만 이퀄라이저 추가
-                    if(i === linesData.length - 1) {
-                        const eq = document.createElement('div');
-                        eq.className = 'equalizer';
-                        for(let b=0; b<4; b++){
-                            const bar = document.createElement('div'); bar.className='bar'; bar.style.animationDelay=`${b*0.1}s`; eq.appendChild(bar);
-                        }
-                        line.appendChild(eq);
-                    }
-
-                    group.appendChild(line);
-                    
-                    // 순차적으로 라인 등장 및 타이핑
-                    setTimeout(() => {
-                        line.classList.add('active');
-                        typeEffect(textSpan.querySelector('.rest'), text.slice(1));
-                    }, i * 600);
-                });
-
-                panelContainer.appendChild(group);
-                currentIdx++;
-            }
-
-            function typeEffect(el, text) {
-                let i = 0;
-                function type() { if (i < text.length) { el.innerText += text.charAt(i); i++; setTimeout(type, 40); } }
-                type();
-            }
-
-            setInterval(spawnLines, 6000);
-            window.addEventListener('resize', initGrid);
-            video.addEventListener('loadedmetadata', () => { initGrid(); spawnLines(); });
-            if (video.readyState >= 1) { initGrid(); spawnLines(); }
-        });
-    </script>
-</body>
-</html>
+/* 모바일 비율 대폭 축소 */
+@media (max-width: 768px) {
+    .fui-group { 
+        top: 8%; /* 모바일에서 더 위로 */
+        left: 4%; /* 모바일에서 더 왼쪽으로 밀착 */
+        gap: 4px; 
+    }
+    .fui-line { 
+        padding: 3px 6px; /* 여백 축소 */
+    }
+    .fui-text { 
+        font-size: 3.2vw; /* 기존 4.5vw에서 대폭 축소 (헤더와 유사하거나 살짝 작은 수준) */
+    }
+    .equalizer { 
+        height: 2.5vw; 
+        margin-left: 6px;
+    }
+}
