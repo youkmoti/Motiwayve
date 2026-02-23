@@ -4,17 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MOTIWAYVE</title>
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <style>
+        /* 1. 기본 설정 및 스크롤 복구 */
         html { scroll-behavior: smooth; }
         body, html {
             margin: 0; padding: 0;
             width: 100%; background-color: white;
-            font-family: 'Pretendard', sans-serif;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
             color: #333; line-height: 1.6;
             overflow-x: hidden;
         }
 
+        /* 2. 헤더 디자인 완벽 복구 */
         header {
             position: fixed; top: 0; left: 0;
             width: 100%; height: 60px;
@@ -26,116 +27,141 @@
             justify-content: space-between;
         }
 
-        .header-left { display: flex; align-items: center; }
-        .header-logo { width: auto; height: 20px; margin-right: 8px; }
-        .header-title { font-weight: bold; font-size: 0.9rem; letter-spacing: 0.5px; color: #000; }
+        .header-left { display: flex; align-items: center; flex-shrink: 0; }
+        .header-logo { width: auto; height: 24px; margin-right: 8px; }
+        .header-title { font-weight: bold; font-size: 0.95rem; letter-spacing: 0.5px; color: #000; white-space: nowrap; }
 
-        nav { display: flex; align-items: center; }
-        nav a { text-decoration: none; color: #444; font-size: 0.85rem; font-weight: 500; transition: 0.3s; }
-        .menu-divider { width: 1px; height: 10px; background-color: #ddd; margin: 0 12px; }
+        nav { display: flex; align-items: center; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+        nav::-webkit-scrollbar { display: none; }
 
-        /* 메인 비주얼: 모바일 비율 고정 수정 */
+        nav a {
+            text-decoration: none; color: #444;
+            font-size: 0.9rem; font-weight: 500; transition: 0.3s;
+            flex-shrink: 0; display: flex; align-items: center;
+        }
+        nav a:hover { color: #000; }
+
+        .menu-divider {
+            width: 1px; height: 12px; background-color: #ddd;
+            margin: 0 15px; flex-shrink: 0; align-self: center; 
+        }
+
+        /* 3. 메인 비주얼 (그리드 효과 포함) */
         #main-visual {
             position: relative;
-            width: 100%;
+            width: 100%; height: 100vh;
             background-color: #000;
-            padding-top: 60px; /* 헤더 공간 */
-            overflow: hidden;
+            padding-top: 60px; overflow: hidden;
         }
-        
-        /* 영상 비율 유지 로직 */
-        .video-wrapper {
-            position: relative;
-            width: 100%;
-            height: 0;
-            padding-bottom: 56.25%; /* 16:9 비율 고정 */
-        }
-        @media (orientation: portrait) {
-            .video-wrapper { padding-bottom: 177.7%; /* 모바일 세로 영상일 경우 9:16 비율 */ }
-        }
-
         #bg-video {
             position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%;
-            object-fit: contain; /* 확대 방지, 비율 맞춤 */
-            z-index: 1;
+            width: 100%; height: 100%; object-fit: cover; z-index: 1;
         }
-
-        /* 그리드 시스템 전용 레이어 */
         #grid-overlay {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 5; pointer-events: none;
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; z-index: 5; pointer-events: none;
         }
-
-        .grid-line {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.15);
-            opacity: 0.05;
-        }
+        .grid-line { position: absolute; background: rgba(255, 255, 255, 0.2); opacity: 0.08; }
         .line-x { width: 100%; height: 1px; }
         .line-y { height: 100%; width: 1px; }
-
-        /* 귀퉁이 텍스트 데이터 */
         .grid-data {
-            position: absolute;
-            font-family: 'Courier New', monospace;
-            font-size: 7px;
-            color: rgba(255, 255, 255, 0.5);
-            transition: opacity 0.3s;
-            opacity: 0;
+            position: absolute; font-family: 'Courier New', monospace; font-size: 8px;
+            color: rgba(255, 255, 255, 0.5); transition: opacity 0.4s; opacity: 0;
         }
-
-        /* 교차점 기호 */
         .grid-node {
-            position: absolute;
-            font-size: 9px;
-            color: rgba(255, 255, 255, 0.7);
+            position: absolute; font-size: 10px; color: rgba(255, 255, 255, 0.8);
             transform: translate(-50%, -50%);
         }
 
-        /* 인스타 버튼 */
-        #insta-float {
-            position: fixed; bottom: 20px; right: 20px; z-index: 2000;
-            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(8px);
-            width: 40px; height: 40px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        /* 4. 섹션 스타일 및 원본 텍스트 복구 */
+        section:not(#main-visual) { padding: 100px 10%; min-height: 50vh; border-bottom: 1px solid #f5f5f5; text-align: center; }
+        
+        #about { background-color: #fff; }
+        .about-logo { width: 80px; margin-bottom: 25px; }
+        .about-title { font-size: 1.4rem; font-weight: bold; margin-bottom: 20px; color: #000; word-break: keep-all; }
+        .about-text { 
+            max-width: 800px; margin: 0 auto; 
+            white-space: pre-line; word-break: keep-all; color: #555;
+            font-size: 0.95rem; padding: 0 10px; text-align: center;
         }
-        #insta-float svg { width: 18px; height: 18px; fill: #333; }
 
-        section:not(#main-visual) { padding: 80px 8%; text-align: center; }
-        footer { padding: 40px; text-align: center; font-size: 0.75rem; color: #aaa; }
+        #project { background-color: #fafafa; }
+        #contact { background-color: #fff; }
+        .section-name { font-size: 1.1rem; font-weight: bold; letter-spacing: 3px; margin-bottom: 40px; }
+        .empty-page { padding: 60px 0; color: #bbb; font-style: italic; }
+
+        .contact-info { margin-top: 30px; font-size: 1rem; }
+        .contact-info a { color: #000; text-decoration: none; border-bottom: 1px solid #ddd; }
+
+        /* 5. 인스타 플로팅 아이콘 */
+        #insta-float {
+            position: fixed; bottom: 30px; right: 30px; z-index: 2000;
+            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px);
+            width: 45px; height: 45px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.05); transition: 0.3s;
+        }
+        #insta-float svg { width: 22px; height: 22px; fill: #333; }
+
+        footer { padding: 50px; text-align: center; font-size: 0.8rem; color: #aaa; }
+
+        @media (max-width: 768px) {
+            header { padding: 0 12px; height: 55px; }
+            .header-logo { height: 20px; }
+            .header-title { font-size: 0.85rem; }
+            nav a { font-size: 0.85rem; }
+            section { padding: 60px 20px; }
+            #insta-float { bottom: 20px; right: 20px; width: 40px; height: 40px; }
+        }
     </style>
 </head>
 <body>
 
     <header>
         <div class="header-left">
-            <img src="logo_header.png" alt="Motiwayve" class="header-logo">
+            <img src="logo_header.png" alt="Motiwayve Logo" class="header-logo">
             <span class="header-title">MOTIWAYVE</span>
         </div>
         <nav>
-            <a href="#about">About</a><div class="menu-divider"></div>
-            <a href="#project">Project</a><div class="menu-divider"></div>
+            <a href="#about">About</a>
+            <div class="menu-divider"></div>
+            <a href="#project">Project</a>
+            <div class="menu-divider"></div>
             <a href="#contact">Contact</a>
         </nav>
     </header>
 
     <section id="main-visual">
-        <div class="video-wrapper">
-            <video id="bg-video" autoplay muted loop playsinline>
-                <source src="https://motiwayve.com/background.mp4" type="video/mp4">
-            </video>
-            <div id="grid-overlay"></div>
-        </div>
+        <video id="bg-video" autoplay muted loop playsinline preload="auto">
+            <source src="https://motiwayve.com/background.mp4" type="video/mp4">
+        </video>
+        <div id="grid-overlay"></div>
     </section>
 
     <section id="about">
-        <img src="logo.png" style="width:60px; margin-bottom:20px;">
-        <div style="font-size:1.2rem; font-weight:bold; margin-bottom:15px;">뉴미디어 디자인 솔루션</div>
-        <p style="font-size:0.9rem; color:#666;">가상과 현실을 잇는 새로운 디지털 콘텐츠를 제작합니다.</p>
+        <img src="logo.png" alt="Motiwayve Logo" class="about-logo">
+        <div class="about-title">디지털로 구현되는 뉴미디어디자인</div>
+        <p class="about-text">
+            앱 / 게임 / 영상미디어 / 증강현실 AR / 가상현실 / 3D디자인 콘텐츠 및 미디어 기반 디자인 전문 업체로서, 
+            뉴미디어와 결부된 맞춤형 디자인과 솔루션을 창조합니다.
+
+            다양한 디지털 2D, 3D, 미디어 콘텐츠를 제작, 전시, 교육, 공공, 게임, 엔터테인먼트, 건축, 공간 등, 
+            대입 가능한 모든 현실분야에 결합, 가상과 현실이 결합된 새로운 콘텐츠를 탄생시킵니다. 
+            아날로그에서 그칠 수 있는 세상과 디지털콘텐츠를 융합하여 새롭게 창조된 현실을 체험해 보세요.
+        </p>
+    </section>
+
+    <section id="project">
+        <div class="section-name">PROJECT</div>
+        <div class="empty-page">준비 중인 페이지입니다.</div>
+    </section>
+
+    <section id="contact">
+        <div class="section-name">CONTACT</div>
+        <div class="contact-info">
+            <p>Email: <a href="mailto:youkksw2018@gmail.com">youkksw2018@gmail.com</a></p>
+            <p>Instagram: <a href="https://www.instagram.com/motiwayve.ssixx" target="_blank">@motiwayve.ssixx</a></p>
+        </div>
     </section>
 
     <a href="https://www.instagram.com/motiwayve.ssixx" id="insta-float" target="_blank">
@@ -147,13 +173,14 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const overlay = document.getElementById('grid-overlay');
-            const spacing = 120; // 더 조밀한 격자
-            const keywords = ["NEWMEDIA", "AR", "VR", "AUGMENTED", "3D", "UI", "HMD", "DESIGN", "SYNC", "OS", "LIVE", "RENDER"];
+            const keywords = ["NEWMEDIA", "AR", "VR", "AUGMENTED", "3D", "UI", "HMD", "DESIGN", "SYNC", "OS", "LIVE", "RENDER", "ART"];
+            
+            let spacing = window.innerWidth > 768 ? 280 : 160;
 
             function initGrid() {
-                const rect = overlay.getBoundingClientRect();
-                const h = rect.height;
-                const w = rect.width;
+                overlay.innerHTML = '';
+                const h = window.innerHeight;
+                const w = window.innerWidth;
 
                 for (let i = 0; i <= h; i += spacing) {
                     const line = document.createElement('div');
@@ -167,70 +194,56 @@
                     line.style.left = `${j}px`;
                     overlay.appendChild(line);
                 }
-
-                // 교차점(귀퉁이) 데이터 포인트 생성
                 for (let i = spacing; i < h; i += spacing) {
                     for (let j = spacing; j < w; j += spacing) {
-                        createCornerData(i, j);
+                        createFUIDetails(i, j);
                     }
                 }
             }
 
-            function createCornerData(y, x) {
-                // 한 교차점에 최대 2개의 텍스트가 나오게 설계
-                const dataCount = 2;
-                for(let k=0; k<dataCount; k++) {
-                    const dataEl = document.createElement('div');
-                    dataEl.className = 'grid-data';
-                    
-                    // 귀퉁이 위치 랜덤 (Top-Left, Top-Right, Bottom-Left, Bottom-Right)
-                    const offsetX = (Math.random() > 0.5 ? 5 : -35);
-                    const offsetY = (Math.random() > 0.5 ? 5 : -15);
-                    dataEl.style.top = `${y + offsetY}px`;
-                    dataEl.style.left = `${x + offsetX}px`;
-                    
-                    overlay.appendChild(dataEl);
-                    animateData(dataEl);
-                }
-                
-                // 교차점 기호 (+)
+            function createFUIDetails(y, x) {
                 const node = document.createElement('div');
                 node.className = 'grid-node';
-                node.style.top = `${y}px`;
-                node.style.left = `${x}px`;
+                node.style.top = `${y}px`; node.style.left = `${x}px`;
                 node.innerText = '+';
                 overlay.appendChild(node);
+
+                for(let k=0; k<2; k++) {
+                    const dataEl = document.createElement('div');
+                    dataEl.className = 'grid-data';
+                    const isRight = Math.random() > 0.5;
+                    const isBottom = Math.random() > 0.5;
+                    dataEl.style.top = isBottom ? `${y + 8}px` : `${y - 18}px`;
+                    dataEl.style.left = isRight ? `${x + 8}px` : `${x - 45}px`;
+                    overlay.appendChild(dataEl);
+                    startDataLoop(dataEl);
+                }
             }
 
-            function animateData(el) {
+            function startDataLoop(el) {
                 const update = () => {
                     const active = Math.random() > 0.6;
                     el.style.opacity = active ? 1 : 0;
-                    
                     if(active) {
-                        const type = Math.random();
-                        if(type > 0.6) {
-                            el.innerText = keywords[Math.floor(Math.random()*keywords.length)];
-                        } else if(type > 0.3) {
-                            el.innerText = `0.${Math.floor(Math.random()*999)}`;
-                        } else {
-                            // 카운팅 숫자 효과
-                            let num = 0;
-                            const timer = setInterval(() => {
-                                num += Math.floor(Math.random()*10);
-                                el.innerText = `ID:${num}`;
-                                if(num > 100) clearInterval(timer);
-                            }, 50);
+                        const r = Math.random();
+                        if(r > 0.7) el.innerText = keywords[Math.floor(Math.random()*keywords.length)];
+                        else if(r > 0.4) el.innerText = `[${(Math.random()*1).toFixed(3)}]`;
+                        else {
+                            let n = 0;
+                            const t = setInterval(() => {
+                                n += 7;
+                                el.innerText = `LOAD:${n}%`;
+                                if(n >= 100) clearInterval(t);
+                            }, 40);
                         }
                     }
-                    setTimeout(update, 1000 + Math.random() * 3000);
+                    setTimeout(update, 1500 + Math.random() * 3000);
                 };
                 update();
             }
 
-            // 모바일 리사이즈 대응
             window.addEventListener('resize', () => {
-                overlay.innerHTML = '';
+                spacing = window.innerWidth > 768 ? 280 : 160;
                 initGrid();
             });
 
