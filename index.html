@@ -9,91 +9,80 @@
         html { scroll-behavior: smooth; }
         body, html { margin: 0; padding: 0; width: 100%; background-color: #000; font-family: 'Noto Sans KR', sans-serif; overflow-x: hidden; }
 
-        /* --- 헤더: 모바일 잘림 방지 최적화 --- */
         header {
             position: fixed; top: 0; left: 0; width: 100%; height: 60px;
             background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(15px);
             display: flex; align-items: center; padding: 0 4%; box-sizing: border-box;
             z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.05); justify-content: space-between;
         }
-        .header-title { font-weight: 700; font-size: 1rem; color: #000; text-decoration: none; letter-spacing: -0.02em; }
+        .header-title { font-weight: 700; font-size: 1rem; color: #000; text-decoration: none; }
         nav { display: flex; align-items: center; }
-        nav a { text-decoration: none; color: #444; font-size: 0.9rem; font-weight: 700; transition: 0.3s; }
-        .menu-divider { width: 1px; height: 12px; background-color: #ddd; margin: 0 15px; }
+        nav a { text-decoration: none; color: #444; font-size: 0.9rem; font-weight: 700; }
+        .menu-divider { width: 1px; height: 12px; background-color: #ddd; margin: 0 12px; }
 
         #main-visual { position: relative; width: 100%; padding-top: 60px; background: #000; }
         #video-wrapper { position: relative; width: 100%; line-height: 0; overflow: hidden; }
         #bg-video { width: 100%; height: auto; display: block; }
 
-        /* 그리드 레이어 */
         #grid-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
         .grid-line { position: absolute; background: rgba(255, 255, 255, 0.3); opacity: 0.2; }
         .line-x { width: 100%; height: 1px; } .line-y { height: 100%; width: 1px; }
         .grid-node { position: absolute; font-size: 10px; color: rgba(255, 255, 255, 0.5); transform: translate(-50%, -50%); }
 
-        /* --- 반투명 박스: 폰트 두께 및 비율 조정 --- */
+        /* --- 박스 제거 및 개별 라인 배경 --- */
         #panel-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; pointer-events: none; }
-        .fui-panel {
+        .fui-group {
             position: absolute;
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(20px);
-            padding: 2.5vw;
-            box-sizing: border-box;
+            top: 15%; left: 8%; /* 영상 내부 위치 */
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-            width: 0; overflow: hidden;
-            border-radius: 2px;
+            gap: 6px; /* 줄 사이 간격 */
         }
         .fui-line {
-            font-size: 1.6vw; 
-            font-weight: 700; /* 헤더 메뉴와 동일한 두께 */
-            color: #fff;
-            margin-bottom: 0.8vw;
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            padding: 4px 8px; /* 텍스트 주변 5px 내외 여백 */
+            border-radius: 2px;
             opacity: 0;
-            display: flex;
-            line-height: 1.4;
-            letter-spacing: -0.01em;
+            transform: translateX(-10px);
+            transition: opacity 0.4s, transform 0.4s;
+            white-space: nowrap;
         }
-        .fui-line .first-letter { color: #000; margin-right: 0.3vw; }
-        .fui-line.show { opacity: 1; }
+        .fui-line.active { opacity: 1; transform: translateX(0); }
+        
+        .fui-text {
+            font-size: 1.8vw; /* 철저히 영상 비율에 맞춤 */
+            font-weight: 500;
+            color: #fff;
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+        .fui-text .first-letter { color: #000; font-weight: 700; }
 
-        /* 화이트 이퀄라이저 */
+        /* 화이트 이퀄라이저 (마지막 줄 끝에 배치) */
         .equalizer {
-            position: absolute; bottom: 1.5vw; right: 1.5vw;
-            display: flex; align-items: flex-end; height: 1.8vw; gap: 2px;
-            opacity: 0; transition: opacity 0.5s;
+            display: inline-flex; align-items: flex-end; height: 1.2vw; gap: 2px; margin-left: 10px;
         }
-        .equalizer.show { opacity: 1; }
-        .bar { width: 3px; background: #fff; animation: equalize 0.5s infinite alternate ease-in-out; }
+        .bar { width: 2px; background: #fff; animation: equalize 0.5s infinite alternate ease-in-out; }
         @keyframes equalize { 0% { height: 20%; } 100% { height: 100%; } }
 
-        /* 모바일 헤더 및 패널 대응 */
+        /* 모바일 비율 조정 */
         @media (max-width: 768px) {
-            header { padding: 0 15px; height: 55px; }
-            .header-title { font-size: 0.85rem; }
-            nav a { font-size: 0.75rem; }
-            .menu-divider { margin: 0 8px; } /* 간격을 줄여서 잘림 방지 */
-            
-            #main-visual { padding-top: 55px; }
-            .fui-panel { padding: 4vw; }
-            .fui-line { font-size: 4vw; margin-bottom: 1.5vw; }
-            .equalizer { height: 4vw; bottom: 3vw; right: 3vw; }
-            .bar { width: 2px; }
+            .fui-text { font-size: 4.5vw; }
+            .fui-group { top: 12%; left: 5%; }
+            .equalizer { height: 3vw; }
         }
 
         section:not(#main-visual) { padding: 80px 10%; text-align: center; background: #fff; }
-        .about-text { max-width: 800px; margin: 0 auto; color: #555; line-height: 1.8; word-break: keep-all; font-size: 0.95rem; }
-        footer { padding: 40px; text-align: center; font-size: 0.8rem; color: #ccc; background: #fff; }
+        footer { padding: 40px; text-align: center; font-size: 0.8rem; color: #ccc; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="header-left">
-            <a href="#" class="header-title">MOTIWAYVE</a>
-        </div>
+        <div class="header-left"><a href="#" class="header-title">MOTIWAYVE</a></div>
         <nav>
             <a href="#about">About</a><div class="menu-divider"></div>
             <a href="#project">Project</a><div class="menu-divider"></div>
@@ -112,14 +101,8 @@
     </section>
 
     <section id="about">
-        <div style="font-size:1.4rem; font-weight:700; margin-bottom:20px; color:#000;">NEW MEDIA DESIGN GROUP</div>
-        <p class="about-text">
-            앱 / 게임 / 영상미디어 / 증강현실 AR / 가상현실 / 3D디자인 콘텐츠 및 미디어 기반 디자인 전문 업체로서, 
-            뉴미디어와 결부된 맞춤형 디자인과 솔루션을 창조합니다.
-        </p>
+        <div style="font-size:1.2rem; font-weight:700;">NEW MEDIA DESIGN GROUP</div>
     </section>
-
-    <footer>&copy; 2026 MOTIWAYVE. All rights reserved.</footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -151,59 +134,57 @@
             }
 
             let currentIdx = 0;
-            function spawnPanel() {
+
+            function spawnLines() {
                 panelContainer.innerHTML = '';
-                const panel = document.createElement('div');
-                panel.className = 'fui-panel';
+                const group = document.createElement('div');
+                group.className = 'fui-group';
                 
-                const vW = wrapper.offsetWidth;
-                const vH = wrapper.offsetHeight;
-                const targetW = vW * 0.35;
-                const targetH = vH * 0.28;
-
-                panel.style.top = '10%';
-                panel.style.left = '8%';
-                panel.style.height = `${targetH}px`;
-
-                const eq = document.createElement('div');
-                eq.className = 'equalizer';
-                for(let b=0; b<6; b++){
-                    const bar = document.createElement('div'); bar.className='bar'; bar.style.animationDelay=`${b*0.1}s`; eq.appendChild(bar);
-                }
-                panel.appendChild(eq);
-
                 const linesData = typingData[currentIdx % typingData.length];
-                linesData.forEach(text => {
+                
+                linesData.forEach((text, i) => {
                     const line = document.createElement('div');
                     line.className = 'fui-line';
-                    line.innerHTML = `<span class="first-letter">${text.charAt(0)}</span><span class="rest-text"></span>`;
-                    panel.appendChild(line);
-                });
-                panelContainer.appendChild(panel);
+                    
+                    const textSpan = document.createElement('span');
+                    textSpan.className = 'fui-text';
+                    textSpan.innerHTML = `<span class="first-letter">${text.charAt(0)}</span><span class="rest"></span>`;
+                    
+                    line.appendChild(textSpan);
 
-                setTimeout(() => { panel.style.width = (window.innerWidth <= 768) ? '75%' : `${targetW}px`; }, 100);
-                setTimeout(() => {
-                    eq.classList.add('show');
-                    panel.querySelectorAll('.fui-line').forEach((l, i) => {
-                        setTimeout(() => {
-                            l.classList.add('show');
-                            typeEffect(l.querySelector('.rest-text'), linesData[i].slice(1));
-                        }, i * 400);
-                    });
-                    currentIdx++;
-                }, 800);
+                    // 마지막 줄에만 이퀄라이저 추가
+                    if(i === linesData.length - 1) {
+                        const eq = document.createElement('div');
+                        eq.className = 'equalizer';
+                        for(let b=0; b<4; b++){
+                            const bar = document.createElement('div'); bar.className='bar'; bar.style.animationDelay=`${b*0.1}s`; eq.appendChild(bar);
+                        }
+                        line.appendChild(eq);
+                    }
+
+                    group.appendChild(line);
+                    
+                    // 순차적으로 라인 등장 및 타이핑
+                    setTimeout(() => {
+                        line.classList.add('active');
+                        typeEffect(textSpan.querySelector('.rest'), text.slice(1));
+                    }, i * 600);
+                });
+
+                panelContainer.appendChild(group);
+                currentIdx++;
             }
 
             function typeEffect(el, text) {
                 let i = 0;
-                function type() { if (i < text.length) { el.innerText += text.charAt(i); i++; setTimeout(type, 30); } }
+                function type() { if (i < text.length) { el.innerText += text.charAt(i); i++; setTimeout(type, 40); } }
                 type();
             }
 
-            setInterval(spawnPanel, 5500);
+            setInterval(spawnLines, 6000);
             window.addEventListener('resize', initGrid);
-            video.addEventListener('loadedmetadata', () => { initGrid(); spawnPanel(); });
-            if (video.readyState >= 1) { initGrid(); spawnPanel(); }
+            video.addEventListener('loadedmetadata', () => { initGrid(); spawnLines(); });
+            if (video.readyState >= 1) { initGrid(); spawnLines(); }
         });
     </script>
 </body>
