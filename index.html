@@ -3,178 +3,219 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MOTIWAYVE</title>
+    <title>MOTIWAYVE | New Media Design</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <style>
-        /* 기본 설정 */
-        html { scroll-behavior: smooth; }
-        body, html {
-            margin: 0; padding: 0;
-            width: 100%; background-color: white;
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-            color: #333; line-height: 1.6;
+        :root {
+            --bg-color: #0a0a0a;
+            --accent-white: rgba(255, 255, 255, 0.8);
+            --grid-line-color: rgba(255, 255, 255, 0.12);
+            --data-text-color: rgba(255, 255, 255, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background-color: var(--bg-color); 
+            color: white; 
+            font-family: 'Pretendard', sans-serif;
             overflow-x: hidden;
         }
 
-        /* 헤더 설정 */
-        header {
-            position: fixed; top: 0; left: 0;
-            width: 100%; height: 60px;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            display: flex; align-items: center;
-            padding: 0 4%; box-sizing: border-box;
-            z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.05);
-            justify-content: space-between;
-        }
-
-        .header-left { display: flex; align-items: center; flex-shrink: 0; }
-        .header-logo { width: auto; height: 24px; margin-right: 8px; }
-        .header-title { font-weight: bold; font-size: 0.95rem; letter-spacing: 0.5px; color: #000; white-space: nowrap; }
-        
-        /* 1. 로고와 메뉴 사이의 메인 구분선 삭제 (주석 처리 또는 제거) */
-        .main-divider { display: none; } 
-
-        /* 메뉴 영역 */
-        nav { 
-            display: flex; 
-            align-items: center; /* 수직 중앙 정렬 핵심 */
-            overflow-x: auto; 
-            white-space: nowrap; 
-            scrollbar-width: none;
-        }
-        nav::-webkit-scrollbar { display: none; }
-
-        nav a {
-            text-decoration: none; color: #444;
-            font-size: 0.9rem;
-            font-weight: 500; transition: 0.3s;
-            flex-shrink: 0;
+        /* 메인 영상 컨테이너 */
+        #main-hero {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
             display: flex;
-            align-items: center; /* 텍스트 수직 정렬 */
-        }
-        nav a:hover { color: #000; }
-
-        /* 메뉴 사이 세로 라인 수정 */
-        .menu-divider {
-            width: 1px;
-            height: 12px; /* 높이 소폭 조정 */
-            background-color: #ddd;
-            margin: 0 15px;
-            flex-shrink: 0;
-            /* 웹에서도 중앙에 오도록 함 */
-            align-self: center; 
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
         }
 
-        /* 메인 영상 섹션 */
-        #main-visual {
-            padding: 0; width: 100%; height: auto; min-height: 100vh;
-            display: flex; align-items: center; background-color: #000;
-            padding-top: 60px;
-        }
-        #bg-video { width: 100%; height: auto; display: block; }
-
-        /* 섹션 공통 스타일 */
-        section { padding: 100px 10%; min-height: 50vh; border-bottom: 1px solid #f5f5f5; }
-
-        /* About 섹션 */
-        #about { text-align: center; background-color: #fff; }
-        .about-logo { width: 80px; margin-bottom: 25px; }
-        .about-title { font-size: 1.4rem; font-weight: bold; margin-bottom: 20px; color: #000; word-break: keep-all; }
-        .about-text { 
-            max-width: 800px; margin: 0 auto; 
-            white-space: pre-line; word-break: keep-all; color: #555;
-            font-size: 0.95rem; padding: 0 10px;
+        #main-hero video {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
         }
 
-        /* Project & Contact 섹션 */
-        #project { background-color: #fafafa; text-align: center; }
-        #contact { background-color: #fff; text-align: center; }
-        .section-name { font-size: 1.1rem; font-weight: bold; letter-spacing: 3px; margin-bottom: 40px; }
-        .empty-page { padding: 60px 0; color: #bbb; font-style: italic; }
+        /* 과학 인터페이스 그리드 시스템 */
+        #grid-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 5;
+            pointer-events: none;
+        }
 
-        .contact-info { margin-top: 30px; font-size: 1rem; }
-        .contact-info a { color: #000; text-decoration: none; border-bottom: 1px solid #ddd; }
+        .grid-line {
+            position: absolute;
+            background: var(--grid-line-color);
+            transition: opacity 2s ease-in-out;
+            opacity: 0;
+        }
 
-        footer { padding: 50px; text-align: center; font-size: 0.8rem; color: #aaa; }
+        .line-x { width: 100%; height: 1px; }
+        .line-y { height: 100%; width: 1px; }
 
-        /* 모바일 대응 */
-        @media (max-width: 768px) {
-            #main-visual { min-height: auto; height: auto; }
-            #bg-video { width: 100%; height: auto; object-fit: contain; }
-            header { padding: 0 12px; height: 55px; }
-            .header-logo { height: 20px; }
-            .header-title { font-size: 0.85rem; }
-            nav a { font-size: 0.85rem; }
-            .menu-divider { margin: 0 10px; height: 10px; }
-            section { padding: 60px 20px; }
+        .grid-data {
+            position: absolute;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 9px;
+            color: var(--data-text-color);
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            text-transform: uppercase;
+        }
+
+        /* 중앙 텍스트 (영상 가림 최소화) */
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(2rem, 8vw, 5rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            opacity: 0.9;
+        }
+
+        /* 인스타그램 아이콘 (Sticky Floating) */
+        #insta-link {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+        }
+
+        #insta-link:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        #insta-link svg {
+            width: 32px; height: 32px;
+            fill: white;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+        }
+
+        /* 오디오 컨트롤 */
+        #audio-ctrl {
+            position: fixed;
+            bottom: 35px;
+            right: 80px;
+            z-index: 100;
+            cursor: pointer;
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--data-text-color);
+            border: 1px solid var(--data-text-color);
+            padding: 5px 10px;
+            transition: all 0.3s;
+        }
+
+        #audio-ctrl:hover {
+            color: white;
+            border-color: white;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="header-left">
-            <img src="logo_header.png" alt="Motiwayve Logo" class="header-logo">
-            <span class="header-title">MOTIWAYVE</span>
-        </div>
-        <nav>
-            <a href="#about">About</a>
-            <div class="menu-divider"></div>
-            <a href="#project">Project</a>
-            <div class="menu-divider"></div>
-            <a href="#contact">Contact</a>
-        </nav>
-    </header>
-
-    <section id="main-visual">
-        <video id="bg-video" autoplay muted loop playsinline preload="auto">
-            <source src="https://motiwayve.com/background.mp4" type="video/mp4">
+    <section id="main-hero">
+        <video autoplay muted loop playsinline>
+            <source src="your-video-file.mp4" type="video/mp4">
         </video>
-    </section>
 
-    <section id="about">
-        <img src="logo.png" alt="Motiwayve Logo" class="about-logo">
-        <div class="about-title">디지털로 구현되는 뉴미디어디자인</div>
-        <p class="about-text">
-            앱 / 게임 / 영상미디어 / 증강현실 AR / 가상현실 / 3D디자인 콘텐츠 및 미디어 기반 디자인 전문 업체로서, 
-            뉴미디어와 결부된 맞춤형 디자인과 솔루션을 창조합니다.
+        <div id="grid-overlay"></div>
 
-            다양한 디지털 2D, 3D, 미디어 콘텐츠를 제작, 전시, 교육, 공공, 게임, 엔터테인먼트, 건축, 공간 등, 
-            대입 가능한 모든 현실분야에 결합, 가상과 현실이 결합된 새로운 콘텐츠를 탄생시킵니다. 
-            아날로그에서 그칠 수 있는 세상과 디지털콘텐츠를 융합하여 새롭게 창조된 현실을 체험해 보세요.
-        </p>
-    </section>
-
-    <section id="project">
-        <div class="section-name">PROJECT</div>
-        <div class="empty-page">준비 중인 페이지입니다.</div>
-    </section>
-
-    <section id="contact">
-        <div class="section-name">CONTACT</div>
-        <div class="contact-info">
-            <p>Email: <a href="mailto:youkksw2018@gmail.com">youkksw2018@gmail.com</a></p>
-            <p>Instagram: <a href="https://www.instagram.com/motiwayve.ssixx" target="_blank">@motiwayve.ssixx</a></p>
+        <div class="hero-content">
+            <h1>MOTIWAYVE</h1>
         </div>
     </section>
 
-    <footer>
-        &copy; 2026 MOTIWAYVE. All rights reserved.
-    </footer>
+    <div id="audio-ctrl">SOUND OFF</div>
+
+    <a href="https://instagram.com/your_id" id="insta-link" target="_blank">
+        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+    </a>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const video = document.getElementById('bg-video');
-            const playVideo = () => {
-                video.play().catch(() => {
-                    video.muted = true;
-                    video.play();
-                });
-            };
-            playVideo();
-            document.body.addEventListener('touchstart', playVideo, { once: true });
-        });
-    </script>
+        const gridOverlay = document.getElementById('grid-overlay');
+        const spacing = 350; // 그리드 간격 350px
 
+        function initGrid() {
+            // 가로선 (X축 라인)
+            for (let i = 0; i < window.innerHeight; i += spacing) {
+                createLine(i, 'x');
+            }
+            // 세로선 (Y축 라인)
+            for (let j = 0; j < window.innerWidth; j += spacing) {
+                createLine(j, 'y');
+            }
+        }
+
+        function createLine(pos, axis) {
+            const line = document.createElement('div');
+            line.className = `grid-line line-${axis}`;
+            
+            if (axis === 'x') line.style.top = `${pos}px`;
+            else line.style.left = `${pos}px`;
+
+            const data = document.createElement('div');
+            data.className = 'grid-data';
+            
+            // 데이터 위치 조정
+            if (axis === 'x') {
+                data.style.left = '10px';
+                data.style.top = '-12px';
+            } else {
+                data.style.top = '80px';
+                data.style.left = '5px';
+                data.style.transform = 'rotate(90deg)';
+                data.style.transformOrigin = 'left top';
+            }
+
+            line.appendChild(data);
+            gridOverlay.appendChild(line);
+
+            // 애니메이션 루프
+            animateLine(line, data, axis);
+        }
+
+        function animateLine(line, data, axis) {
+            const update = () => {
+                const isActive = Math.random() > 0.4;
+                line.style.opacity = isActive ? '1' : '0';
+
+                if (isActive) {
+                    const prefix = axis === 'x' ? 'TRK' : 'SYS';
+                    const val = (Math.random() * 9999).toFixed(0).padStart(4, '0');
+                    data.innerText = `${prefix}_[${val}]`;
+                }
+
+                setTimeout(update, Math.random() * 3000 + 1000);
+            };
+            update();
+        }
+
+        // 사운드 토글 로직 (가상)
+        const audioBtn = document.getElementById('audio-ctrl');
+        let isMuted = true;
+        audioBtn.onclick = () => {
+            isMuted = !isMuted;
+            audioBtn.innerText = isMuted ? 'SOUND OFF' : 'SOUND ON';
+            // 여기에 실제 오디오 재생 로직 연결 가능
+        };
+
+        // 초기화
+        initGrid();
+
+        // 리사이즈 시 그리드 재구성이 필요할 수 있으나, 공수 절감을 위해 초기 세팅 유지
+    </script>
 </body>
 </html>
