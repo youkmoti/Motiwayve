@@ -9,16 +9,19 @@
         html { scroll-behavior: smooth; }
         body, html { margin: 0; padding: 0; width: 100%; background-color: #000; font-family: 'Noto Sans KR', sans-serif; overflow-x: hidden; }
 
+        /* 헤더 복구: 로고 및 스타일 */
         header {
             position: fixed; top: 0; left: 0; width: 100%; height: 60px;
             background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(15px);
             display: flex; align-items: center; padding: 0 4%; box-sizing: border-box;
             z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.05); justify-content: space-between;
         }
-        .header-title { font-weight: 700; font-size: 1rem; color: #000; text-decoration: none; }
+        .header-left { display: flex; align-items: center; }
+        .header-logo { height: 24px; margin-right: 10px; }
+        .header-title { font-weight: 800; font-size: 1rem; color: #000; text-decoration: none; }
         nav { display: flex; align-items: center; }
         nav a { text-decoration: none; color: #444; font-size: 0.9rem; font-weight: 700; }
-        .menu-divider { width: 1px; height: 12px; background-color: #ddd; margin: 0 12px; }
+        .menu-divider { width: 1px; height: 12px; background-color: #ddd; margin: 0 18px; }
 
         #main-visual { position: relative; width: 100%; padding-top: 60px; background: #000; }
         #video-wrapper { position: relative; width: 100%; line-height: 0; overflow: hidden; }
@@ -30,13 +33,9 @@
         .line-x { width: 100%; height: 1px; } .line-y { height: 100%; width: 1px; }
         .grid-node { position: absolute; font-size: 10px; color: rgba(255, 255, 255, 0.5); transform: translate(-50%, -50%); }
 
-        /* --- 텍스트 라인 배경 및 모바일 비율 최적화 --- */
+        /* 텍스트 라인 배경 및 모바일 비율 최적화 */
         #panel-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; pointer-events: none; }
-        .fui-group {
-            position: absolute;
-            top: 12%; left: 6%;
-            display: flex; flex-direction: column; gap: 0.5vw;
-        }
+        .fui-group { position: absolute; top: 12%; left: 6%; display: flex; flex-direction: column; gap: 0.5vw; }
         .fui-line {
             display: inline-flex; align-items: center;
             background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(10px);
@@ -45,33 +44,29 @@
             transition: opacity 0.4s, transform 0.4s; white-space: nowrap;
         }
         .fui-line.active { opacity: 1; transform: translateX(0); }
-        .fui-text {
-            font-size: 2.2vw; /* 웹 기준 크기 */
-            font-weight: 500; color: #fff; line-height: 1; letter-spacing: -0.02em;
-        }
+        .fui-text { font-size: 2.2vw; font-weight: 500; color: #fff; line-height: 1; letter-spacing: -0.02em; }
         .fui-text .first-letter { color: #000; font-weight: 700; }
-
         .equalizer { display: inline-flex; align-items: flex-end; height: 1.2vw; gap: 2px; margin-left: 10px; }
         .bar { width: 2px; background: #fff; animation: equalize 0.5s infinite alternate ease-in-out; }
         @keyframes equalize { 0% { height: 20%; } 100% { height: 100%; } }
 
-        /* 모바일 최적화 비율 (중앙 가림 방지) */
         @media (max-width: 768px) {
             header { padding: 0 15px; height: 55px; }
             .menu-divider { margin: 0 8px; }
             .fui-group { top: 8%; left: 4%; gap: 4px; }
             .fui-line { padding: 3px 6px; }
-            .fui-text { font-size: 3.2vw; } /* 모바일에서 대폭 축소 */
+            .fui-text { font-size: 3.2vw; }
             .equalizer { height: 2.5vw; margin-left: 6px; }
         }
 
-        /* --- 하단 섹션 복구 --- */
+        /* 섹션 스타일 복구 */
         section:not(#main-visual) { padding: 100px 10%; text-align: center; background: #fff; }
         .about-logo { width: 80px; margin-bottom: 30px; }
-        .about-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 25px; color: #000; }
-        .about-text { max-width: 850px; margin: 0 auto; white-space: pre-line; color: #555; line-height: 1.8; word-break: keep-all; font-size: 1rem; }
+        .section-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 25px; color: #000; }
+        .section-text { max-width: 850px; margin: 0 auto; white-space: pre-line; color: #555; line-height: 1.8; word-break: keep-all; font-size: 1rem; }
         
-        #project, #contact { background: #f9f9f9; border-top: 1px solid #eee; }
+        #project { background: #f9f9f9; border-top: 1px solid #eee; }
+        #contact { background: #fff; border-top: 1px solid #eee; }
         
         footer { padding: 60px; text-align: center; font-size: 0.85rem; color: #bbb; background: #fff; border-top: 1px solid #f5f5f5; }
     </style>
@@ -79,7 +74,10 @@
 <body>
 
     <header>
-        <div class="header-left"><a href="#" class="header-title">MOTIWAYVE</a></div>
+        <div class="header-left">
+            <img src="logo_header.png" alt="Motiwayve" class="header-logo">
+            <a href="#" class="header-title">MOTIWAYVE</a>
+        </div>
         <nav>
             <a href="#about">About</a><div class="menu-divider"></div>
             <a href="#project">Project</a><div class="menu-divider"></div>
@@ -98,18 +96,23 @@
     </section>
 
     <section id="about">
-        <img src="logo.png" alt="Motiwayve Logo" class="about-logo">
-        <div class="about-title">디지털로 구현되는 뉴미디어디자인</div>
-        <p class="about-text">
+        <img src="logo.png" alt="Motiwayve" class="about-logo">
+        <div class="section-title">디지털로 구현되는 뉴미디어디자인</div>
+        <p class="section-text">
             앱 / 게임 / 영상미디어 / 증강현실 AR / 가상현실 / 3D디자인 콘텐츠 및 미디어 기반 디자인 전문 업체로서, 
             뉴미디어와 결부된 맞춤형 디자인과 솔루션을 창조합니다.
-            우리는 기술과 예술의 경계를 허물고 사용자에게 새로운 경험을 제공하는 것을 목표로 합니다.
         </p>
     </section>
 
     <section id="project">
-        <div class="about-title">PROJECTS</div>
-        <p class="about-text">진행 중인 프로젝트 및 포트폴리오가 곧 업데이트될 예정입니다.</p>
+        <div class="section-title">PROJECTS</div>
+        <p class="section-text">새로운 가치를 창출하는 MOTIWAYVE의 프로젝트를 곧 만나보실 수 있습니다.</p>
+    </section>
+
+    <section id="contact">
+        <div class="section-title">CONTACT US</div>
+        <p class="section-text">협업 문의 및 프로젝트 의뢰는 언제나 환영합니다.</p>
+        <div style="margin-top:30px; font-weight:700; color:#000;">motiwayve@gmail.com</div>
     </section>
 
     <footer>&copy; 2026 MOTIWAYVE. All rights reserved.</footer>
@@ -149,7 +152,6 @@
                 const group = document.createElement('div');
                 group.className = 'fui-group';
                 const linesData = typingData[currentIdx % typingData.length];
-                
                 linesData.forEach((text, i) => {
                     const line = document.createElement('div');
                     line.className = 'fui-line';
@@ -157,7 +159,6 @@
                     textSpan.className = 'fui-text';
                     textSpan.innerHTML = `<span class="first-letter">${text.charAt(0)}</span><span class="rest"></span>`;
                     line.appendChild(textSpan);
-
                     if(i === linesData.length - 1) {
                         const eq = document.createElement('div');
                         eq.className = 'equalizer';
