@@ -4,116 +4,95 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MOTIWAYVE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Roboto:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500;700&display=swap" rel="stylesheet">
     <style>
         html { scroll-behavior: smooth; }
-        body, html {
-            margin: 0; padding: 0;
-            width: 100%; background-color: #000;
-            font-family: 'Noto Sans KR', sans-serif;
-            color: #333; overflow-x: hidden;
-        }
+        body, html { margin: 0; padding: 0; width: 100%; background-color: #000; font-family: 'Noto Sans KR', sans-serif; overflow-x: hidden; }
 
-        /* 헤더 스타일 고정 */
+        /* --- 헤더: 모바일 잘림 방지 최적화 --- */
         header {
-            position: fixed; top: 0; left: 0;
-            width: 100%; height: 60px;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(15px);
-            display: flex; align-items: center;
-            padding: 0 4%; box-sizing: border-box;
-            z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.05);
-            justify-content: space-between;
+            position: fixed; top: 0; left: 0; width: 100%; height: 60px;
+            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(15px);
+            display: flex; align-items: center; padding: 0 4%; box-sizing: border-box;
+            z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.05); justify-content: space-between;
         }
-        .header-left { display: flex; align-items: center; }
-        .header-logo { height: 24px; margin-right: 10px; }
-        .header-title { font-weight: 900; font-size: 1rem; color: #000; text-decoration: none; letter-spacing: -0.5px; }
+        .header-title { font-weight: 700; font-size: 1rem; color: #000; text-decoration: none; letter-spacing: -0.02em; }
         nav { display: flex; align-items: center; }
-        nav a { text-decoration: none; color: #444; font-size: 0.9rem; font-weight: 600; }
-        .menu-divider { width: 1px; height: 12px; background-color: #ddd; margin: 0 18px; }
+        nav a { text-decoration: none; color: #444; font-size: 0.9rem; font-weight: 700; transition: 0.3s; }
+        .menu-divider { width: 1px; height: 12px; background-color: #ddd; margin: 0 15px; }
 
-        /* 메인 영역 */
-        #main-visual {
-            position: relative; width: 100%;
-            background-color: #000; padding-top: 60px;
-            display: block; box-sizing: border-box;
-        }
+        #main-visual { position: relative; width: 100%; padding-top: 60px; background: #000; }
         #video-wrapper { position: relative; width: 100%; line-height: 0; overflow: hidden; }
-        #bg-video { width: 100%; height: auto; display: block; z-index: 1; }
-        
-        /* 그리드 시스템 복구 유지 */
-        #grid-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
-        .grid-line { position: absolute; background: rgba(255, 255, 255, 0.5); opacity: 0.25; }
-        .line-x { width: 100%; height: 1px; }
-        .line-y { height: 100%; width: 1px; }
-        .grid-data {
-            position: absolute; font-family: 'Roboto', sans-serif; font-size: 9px;
-            color: rgba(255, 255, 255, 0.9); transition: opacity 0.2s; opacity: 0; white-space: nowrap;
-        }
-        .grid-node { position: absolute; font-size: 11px; color: rgba(255, 255, 255, 0.9); transform: translate(-50%, -50%); }
+        #bg-video { width: 100%; height: auto; display: block; }
 
-        /* --- 이미지 기반 타이핑 패널 --- */
+        /* 그리드 레이어 */
+        #grid-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
+        .grid-line { position: absolute; background: rgba(255, 255, 255, 0.3); opacity: 0.2; }
+        .line-x { width: 100%; height: 1px; } .line-y { height: 100%; width: 1px; }
+        .grid-node { position: absolute; font-size: 10px; color: rgba(255, 255, 255, 0.5); transform: translate(-50%, -50%); }
+
+        /* --- 반투명 박스: 폰트 두께 및 비율 조정 --- */
         #panel-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; pointer-events: none; }
         .fui-panel {
             position: absolute;
-            background: rgba(255, 255, 255, 0.2); /* 헤더와 비슷한 투명도 */
-            backdrop-filter: blur(15px);
-            border-left: 6px solid #000; /* 이미지처럼 굵은 블랙 바 */
-            padding: 30px;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(20px);
+            padding: 2.5vw;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
+            justify-content: center;
             transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
             width: 0; overflow: hidden;
+            border-radius: 2px;
         }
         .fui-line {
-            font-family: 'Roboto', 'Noto Sans KR', sans-serif;
-            font-size: 24px; /* 이미지 비례에 맞춘 크기 */
-            font-weight: 900;
+            font-size: 1.6vw; 
+            font-weight: 700; /* 헤더 메뉴와 동일한 두께 */
             color: #fff;
-            margin-bottom: 12px;
+            margin-bottom: 0.8vw;
             opacity: 0;
             display: flex;
-            letter-spacing: -0.5px;
+            line-height: 1.4;
+            letter-spacing: -0.01em;
         }
-        .fui-line .first-letter { color: #000; margin-right: 4px; }
+        .fui-line .first-letter { color: #000; margin-right: 0.3vw; }
         .fui-line.show { opacity: 1; }
 
-        /* 이퀄라이저 스타일 */
+        /* 화이트 이퀄라이저 */
         .equalizer {
-            position: absolute; bottom: 20px; right: 20px;
-            display: flex; align-items: flex-end; height: 30px; gap: 3px;
+            position: absolute; bottom: 1.5vw; right: 1.5vw;
+            display: flex; align-items: flex-end; height: 1.8vw; gap: 2px;
             opacity: 0; transition: opacity 0.5s;
         }
         .equalizer.show { opacity: 1; }
-        .bar {
-            width: 4px; background: #000;
-            animation: equalize 0.5s infinite alternate ease-in-out;
-        }
-        @keyframes equalize {
-            0% { height: 5px; }
-            100% { height: 25px; }
-        }
+        .bar { width: 3px; background: #fff; animation: equalize 0.5s infinite alternate ease-in-out; }
+        @keyframes equalize { 0% { height: 20%; } 100% { height: 100%; } }
 
-        section:not(#main-visual) { padding: 100px 10%; text-align: center; background: #fff; }
-        .about-text { max-width: 850px; margin: 0 auto; white-space: pre-line; color: #555; line-height: 1.8; word-break: keep-all; }
-        footer { padding: 60px; text-align: center; font-size: 0.85rem; color: #bbb; background: #fff; border-top: 1px solid #f5f5f5; }
-
+        /* 모바일 헤더 및 패널 대응 */
         @media (max-width: 768px) {
-            header { height: 55px; }
-            .fui-panel { padding: 15px; border-left-width: 4px; }
-            .fui-line { font-size: 16px; margin-bottom: 6px; }
-            .equalizer { height: 20px; bottom: 10px; right: 10px; }
+            header { padding: 0 15px; height: 55px; }
+            .header-title { font-size: 0.85rem; }
+            nav a { font-size: 0.75rem; }
+            .menu-divider { margin: 0 8px; } /* 간격을 줄여서 잘림 방지 */
+            
+            #main-visual { padding-top: 55px; }
+            .fui-panel { padding: 4vw; }
+            .fui-line { font-size: 4vw; margin-bottom: 1.5vw; }
+            .equalizer { height: 4vw; bottom: 3vw; right: 3vw; }
+            .bar { width: 2px; }
         }
+
+        section:not(#main-visual) { padding: 80px 10%; text-align: center; background: #fff; }
+        .about-text { max-width: 800px; margin: 0 auto; color: #555; line-height: 1.8; word-break: keep-all; font-size: 0.95rem; }
+        footer { padding: 40px; text-align: center; font-size: 0.8rem; color: #ccc; background: #fff; }
     </style>
 </head>
 <body>
 
     <header>
         <div class="header-left">
-            <img src="logo_header.png" alt="Motiwayve" class="header-logo">
-            <span class="header-title">MOTIWAYVE</span>
+            <a href="#" class="header-title">MOTIWAYVE</a>
         </div>
         <nav>
             <a href="#about">About</a><div class="menu-divider"></div>
@@ -133,8 +112,7 @@
     </section>
 
     <section id="about">
-        <img src="logo.png" style="width:80px; margin-bottom:30px;">
-        <div style="font-size:1.5rem; font-weight:900; margin-bottom:25px;">디지털로 구현되는 뉴미디어디자인</div>
+        <div style="font-size:1.4rem; font-weight:700; margin-bottom:20px; color:#000;">NEW MEDIA DESIGN GROUP</div>
         <p class="about-text">
             앱 / 게임 / 영상미디어 / 증강현실 AR / 가상현실 / 3D디자인 콘텐츠 및 미디어 기반 디자인 전문 업체로서, 
             뉴미디어와 결부된 맞춤형 디자인과 솔루션을 창조합니다.
@@ -146,10 +124,9 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const wrapper = document.getElementById('video-wrapper');
-            const video = document.getElementById('bg-video');
-            const overlay = document.getElementById('grid-overlay');
             const panelContainer = document.getElementById('panel-container');
-            const keywords = ["NEWMEDIA", "AR", "VR", "SYNC", "OS", "3D", "UI"];
+            const overlay = document.getElementById('grid-overlay');
+            const video = document.getElementById('bg-video');
             
             const typingData = [
                 ["Augmented Reality", "Virtual Reality", "Extended Reality"],
@@ -157,60 +134,23 @@
                 ["Application", "Game", "Interactive ART"]
             ];
 
-            const spacing = 160;
-
-            // [그리드 복구]
             function initGrid() {
                 overlay.innerHTML = '';
+                const spacing = 160;
                 const h = wrapper.offsetHeight;
                 const w = wrapper.offsetWidth;
                 for (let i = 0; i <= h; i += spacing) {
-                    const line = document.createElement('div'); line.className = 'grid-line line-x';
-                    line.style.top = `${i}px`; overlay.appendChild(line);
+                    const l = document.createElement('div'); l.className='grid-line line-x'; l.style.top=`${i}px`; overlay.appendChild(l);
                 }
                 for (let j = 0; j <= w; j += spacing) {
-                    const line = document.createElement('div'); line.className = 'grid-line line-y';
-                    line.style.left = `${j}px`; overlay.appendChild(line);
-                }
-                for (let i = spacing; i < h; i += spacing) {
-                    for (let j = spacing; j < w; j += spacing) { createFUIDetails(i, j); }
-                }
-            }
-
-            function createFUIDetails(y, x) {
-                const node = document.createElement('div');
-                node.className = 'grid-node';
-                node.style.top = `${y}px`; node.style.left = `${x}px`;
-                node.innerText = '+';
-                overlay.appendChild(node);
-
-                for(let k=0; k<2; k++) {
-                    const dataEl = document.createElement('div');
-                    dataEl.className = 'grid-data';
-                    const isRight = Math.random() > 0.5;
-                    const isBottom = Math.random() > 0.5;
-                    dataEl.style.top = isBottom ? `${y + 6}px` : `${y - 18}px`;
-                    dataEl.style.left = isRight ? `${x + 6}px` : `${x - 45}px`;
-                    overlay.appendChild(dataEl);
-                    startDataLoop(dataEl);
-                }
-            }
-
-            function startDataLoop(el) {
-                const update = () => {
-                    const active = Math.random() > 0.5;
-                    el.style.opacity = active ? 1 : 0;
-                    if(active) {
-                        el.innerText = keywords[Math.floor(Math.random()*keywords.length)];
+                    const l = document.createElement('div'); l.className='grid-line line-y'; l.style.left=`${j}px`; overlay.appendChild(l);
+                    for(let i=spacing; i<h; i+=spacing) {
+                        const n = document.createElement('div'); n.className='grid-node'; n.style.top=`${i}px`; n.style.left=`${j}px`; n.innerText='+'; overlay.appendChild(n);
                     }
-                    setTimeout(update, 1000 + Math.random() * 2000);
-                };
-                update();
+                }
             }
 
-            // [패널 생성 로직]
             let currentIdx = 0;
-
             function spawnPanel() {
                 panelContainer.innerHTML = '';
                 const panel = document.createElement('div');
@@ -218,30 +158,17 @@
                 
                 const vW = wrapper.offsetWidth;
                 const vH = wrapper.offsetHeight;
-                
-                // 크기: 영상의 약 1/4 (절반의 절반 느낌)
                 const targetW = vW * 0.35;
-                const targetH = vH / 3.5;
+                const targetH = vH * 0.28;
 
-                // 위치: 이미지처럼 왼쪽 상단 부근 고정 혹은 랜덤
-                const isRight = Math.random() > 0.5;
-                const isBottom = Math.random() > 0.5;
-
-                panel.style.top = isBottom ? 'auto' : '10%';
-                panel.style.bottom = isBottom ? '10%' : 'auto';
-                panel.style.left = isRight ? 'auto' : '8%';
-                panel.style.right = isRight ? '8%' : 'auto';
+                panel.style.top = '10%';
+                panel.style.left = '8%';
                 panel.style.height = `${targetH}px`;
-                if(isRight) panel.style.borderLeft = 'none', panel.style.borderRight = '6px solid #000';
 
-                // 이퀄라이저 추가
                 const eq = document.createElement('div');
                 eq.className = 'equalizer';
-                for(let b=0; b<5; b++){
-                    const bar = document.createElement('div');
-                    bar.className = 'bar';
-                    bar.style.animationDelay = `${b * 0.1}s`;
-                    eq.appendChild(bar);
+                for(let b=0; b<6; b++){
+                    const bar = document.createElement('div'); bar.className='bar'; bar.style.animationDelay=`${b*0.1}s`; eq.appendChild(bar);
                 }
                 panel.appendChild(eq);
 
@@ -254,30 +181,29 @@
                 });
                 panelContainer.appendChild(panel);
 
-                setTimeout(() => { panel.style.width = `${targetW}px`; }, 100);
+                setTimeout(() => { panel.style.width = (window.innerWidth <= 768) ? '75%' : `${targetW}px`; }, 100);
                 setTimeout(() => {
                     eq.classList.add('show');
-                    const lines = panel.querySelectorAll('.fui-line');
-                    lines.forEach((line, idx) => {
+                    panel.querySelectorAll('.fui-line').forEach((l, i) => {
                         setTimeout(() => {
-                            line.classList.add('show');
-                            typeEffect(line.querySelector('.rest-text'), linesData[idx].slice(1));
-                        }, idx * 500);
+                            l.classList.add('show');
+                            typeEffect(l.querySelector('.rest-text'), linesData[i].slice(1));
+                        }, i * 400);
                     });
                     currentIdx++;
-                }, 900);
+                }, 800);
             }
 
             function typeEffect(el, text) {
                 let i = 0;
-                function type() { if (i < text.length) { el.innerText += text.charAt(i); i++; setTimeout(type, 40); } }
+                function type() { if (i < text.length) { el.innerText += text.charAt(i); i++; setTimeout(type, 30); } }
                 type();
             }
 
-            setInterval(spawnPanel, 6000);
-            video.addEventListener('loadedmetadata', () => { initGrid(); spawnPanel(); });
+            setInterval(spawnPanel, 5500);
             window.addEventListener('resize', initGrid);
-            initGrid();
+            video.addEventListener('loadedmetadata', () => { initGrid(); spawnPanel(); });
+            if (video.readyState >= 1) { initGrid(); spawnPanel(); }
         });
     </script>
 </body>
