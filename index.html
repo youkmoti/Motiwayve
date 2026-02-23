@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MOTIWAYVE</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <style>
         html { scroll-behavior: smooth; }
         body, html {
@@ -13,6 +14,7 @@
             color: #333; overflow-x: hidden;
         }
 
+        /* 헤더 스타일 */
         header {
             position: fixed; top: 0; left: 0;
             width: 100%; height: 60px;
@@ -27,116 +29,60 @@
         .header-logo { height: 24px; margin-right: 10px; }
         .header-title { font-weight: 800; font-size: 1rem; color: #000; text-decoration: none; }
         nav { display: flex; align-items: center; }
-        nav a { text-decoration: none; color: #444; font-size: 0.9rem; font-weight: 600; transition: 0.3s; }
+        nav a { text-decoration: none; color: #444; font-size: 0.9rem; font-weight: 600; }
         .menu-divider { width: 1px; height: 12px; background-color: #ddd; margin: 0 18px; }
 
+        /* 메인 비주얼 및 그리드 */
         #main-visual {
-            position: relative;
-            width: 100%;
-            background-color: #000;
-            padding-top: 60px; 
-            display: block;
-            box-sizing: border-box;
+            position: relative; width: 100%;
+            background-color: #000; padding-top: 60px;
+            display: block; box-sizing: border-box;
         }
-        
-        #video-wrapper {
-            position: relative;
-            width: 100%;
-            line-height: 0;
-            overflow: hidden;
-        }
-
-        #bg-video {
-            width: 100%;
-            height: auto;
-            display: block;
-            z-index: 1;
-        }
-
-        #grid-overlay {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 5;
-            pointer-events: none;
-        }
-
-        .grid-line {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.5);
-            opacity: 0.25;
-        }
+        #video-wrapper { position: relative; width: 100%; line-height: 0; overflow: hidden; }
+        #bg-video { width: 100%; height: auto; display: block; z-index: 1; }
+        #grid-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
+        .grid-line { position: absolute; background: rgba(255, 255, 255, 0.5); opacity: 0.25; }
         .line-x { width: 100%; height: 1px; }
         .line-y { height: 100%; width: 1px; }
 
-        .grid-data {
-            position: absolute;
-            font-family: 'Courier New', monospace;
-            font-size: 9px;
-            color: rgba(255, 255, 255, 0.9);
-            transition: opacity 0.2s;
-            opacity: 0;
-            white-space: nowrap;
-        }
-
-        .grid-node {
-            position: absolute;
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.9);
-            transform: translate(-50%, -50%);
-        }
-
-        /* --- 신규: 반투명 타이핑 박스 스타일 --- */
+        /* --- 신규: 타이핑 패널 디자인 --- */
+        #panel-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; pointer-events: none; }
         .fui-panel {
             position: absolute;
-            z-index: 10;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-left: 2px solid rgba(255, 255, 255, 0.5);
-            color: #fff;
-            padding: 15px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            border-left: 3px solid #000;
+            padding: 12px 18px;
             box-sizing: border-box;
-            font-family: 'Courier New', monospace;
-            overflow: hidden;
             display: flex;
             flex-direction: column;
-            transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-            width: 0; /* 초기 너비 */
+            justify-content: center;
+            transition: width 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+            width: 0;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
-        .fui-panel.active {
-            /* JS에서 영상 크기에 맞춰 width 결정 예정 */
-        }
-        .fui-text {
-            font-size: 12px;
-            line-height: 1.6;
-            white-space: pre-wrap;
+        .fui-line {
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+            white-space: nowrap;
+            margin: 4px 0;
             opacity: 0;
-            transition: opacity 0.3s;
+            display: flex;
         }
-        .fui-text.show { opacity: 1; }
-        /* ---------------------------------- */
+        .fui-line .first-letter { color: #000; margin-right: 1px; }
+        .fui-line.show { opacity: 1; }
 
+        /* 섹션 스타일 */
         section:not(#main-visual) { padding: 100px 10%; text-align: center; background: #fff; }
-        .about-logo { width: 80px; margin-bottom: 30px; }
-        .about-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 25px; color: #000; }
         .about-text { max-width: 850px; margin: 0 auto; white-space: pre-line; color: #555; line-height: 1.8; word-break: keep-all; }
-
-        #insta-float {
-            position: fixed; bottom: 30px; right: 30px; z-index: 2000;
-            background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px);
-            width: 50px; height: 50px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-        #insta-float svg { width: 24px; height: 24px; fill: #333; }
         footer { padding: 60px; text-align: center; font-size: 0.85rem; color: #bbb; background: #fff; border-top: 1px solid #f5f5f5; }
 
         @media (max-width: 768px) {
             header { height: 55px; }
             #main-visual { padding-top: 55px; }
-            .menu-divider { margin: 0 10px; }
-            section:not(#main-visual) { padding: 70px 20px; }
-            .fui-text { font-size: 10px; }
+            .fui-line { font-size: 11px; }
         }
     </style>
 </head>
@@ -165,8 +111,8 @@
     </section>
 
     <section id="about">
-        <img src="logo.png" alt="Motiwayve Logo" class="about-logo">
-        <div class="about-title">디지털로 구현되는 뉴미디어디자인</div>
+        <img src="logo.png" alt="Motiwayve" style="width:80px; margin-bottom:30px;">
+        <div style="font-size:1.5rem; font-weight:800; margin-bottom:25px;">디지털로 구현되는 뉴미디어디자인</div>
         <p class="about-text">
             앱 / 게임 / 영상미디어 / 증강현실 AR / 가상현실 / 3D디자인 콘텐츠 및 미디어 기반 디자인 전문 업체로서, 
             뉴미디어와 결부된 맞춤형 디자인과 솔루션을 창조합니다.
@@ -181,13 +127,12 @@
             const video = document.getElementById('bg-video');
             const overlay = document.getElementById('grid-overlay');
             const panelContainer = document.getElementById('panel-container');
-            const keywords = ["NEWMEDIA", "AR", "VR", "AUGMENTED", "3D", "UI", "HMD", "DESIGN", "SYNC", "OS", "RENDER", "ART"];
             
-            // 텍스트 데이터 (추후 변경 가능)
+            // 데이터 묶음 (오타 수정 및 구조화)
             const typingData = [
-                "SYSTEM ANALYSIS: COMPLETED\nCREATIVE DIGITAL MEDIA GROUP\nINITIALIZING INTERFACE...",
-                "PROJECT STATUS: ACTIVE\nLOCATION: SEOUL, KOREA\nCONNECTING TO MOTIWAYVE CORE",
-                "UPDATING RENDER BUFFER...\nAR/VR SYNC STABILIZED\nVERSION 2.0.26 READY"
+                ["Augmented Reality", "Virtual Reality", "Extended Reality"],
+                ["3D ART / 3D Media", "2D Image Design", "Concept Design"],
+                ["Application", "Game", "Interactive ART"]
             ];
 
             const spacing = 160;
@@ -196,7 +141,6 @@
                 overlay.innerHTML = '';
                 const h = wrapper.offsetHeight;
                 const w = wrapper.offsetWidth;
-
                 for (let i = 0; i <= h; i += spacing) {
                     const line = document.createElement('div'); line.className = 'grid-line line-x';
                     line.style.top = `${i}px`; overlay.appendChild(line);
@@ -205,80 +149,72 @@
                     const line = document.createElement('div'); line.className = 'grid-line line-y';
                     line.style.left = `${j}px`; overlay.appendChild(line);
                 }
-                for (let i = spacing; i < h; i += spacing) {
-                    for (let j = spacing; j < w; j += spacing) { createFUIDetails(i, j); }
-                }
             }
 
-            function createFUIDetails(y, x) {
-                const node = document.createElement('div');
-                node.className = 'grid-node';
-                node.style.top = `${y}px`; node.style.left = `${x}px`;
-                node.innerText = '+';
-                overlay.appendChild(node);
-                // ... (생략된 데이터 루프 로직은 이전과 동일하게 작동)
-            }
-
-            // --- 신규: 타이핑 박스 생성 로직 ---
-            let currentPanelIdx = 0;
+            let currentIdx = 0;
 
             function spawnPanel() {
-                // 기존 박스 제거
                 panelContainer.innerHTML = '';
-
                 const panel = document.createElement('div');
                 panel.className = 'fui-panel';
                 
-                // 영상 크기 기준 설정
                 const vW = wrapper.offsetWidth;
                 const vH = wrapper.offsetHeight;
-                const targetW = vW * 0.45;
-                const targetH = vH / 3.5;
+                const targetW = vW * 0.25; // 가로 약 1/4 (반으로 축소)
+                const targetH = vH / 5;    // 세로 약 1/5 (반으로 축소)
 
-                // 랜덤 위치 (좌상, 좌하, 우상, 우하 중 하나)
                 const isRight = Math.random() > 0.5;
                 const isBottom = Math.random() > 0.5;
 
-                panel.style.top = isBottom ? 'auto' : '30px';
-                panel.style.bottom = isBottom ? '30px' : 'auto';
-                panel.style.left = isRight ? 'auto' : '30px';
-                panel.style.right = isRight ? '30px' : 'auto';
+                panel.style.top = isBottom ? 'auto' : '40px';
+                panel.style.bottom = isBottom ? '40px' : 'auto';
+                panel.style.left = isRight ? 'auto' : '40px';
+                panel.style.right = isRight ? '40px' : 'auto';
                 panel.style.height = `${targetH}px`;
-                if(isRight) panel.style.borderLeft = 'none', panel.style.borderRight = '2px solid rgba(255,255,255,0.5)';
+                if(isRight) panel.style.borderLeft = 'none', panel.style.borderRight = '3px solid #000';
 
-                const textEl = document.createElement('div');
-                textEl.className = 'fui-text';
-                panel.appendChild(textEl);
+                const linesData = typingData[currentIdx % typingData.length];
+                linesData.forEach(text => {
+                    const line = document.createElement('div');
+                    line.className = 'fui-line';
+                    // 첫 글자 분리 로직
+                    const first = text.charAt(0);
+                    const rest = text.slice(1);
+                    line.innerHTML = `<span class="first-letter">${first}</span><span class="rest-text"></span>`;
+                    panel.appendChild(line);
+                });
+
                 panelContainer.appendChild(panel);
 
-                // 1. 박스 확장 애니메이션
-                setTimeout(() => {
-                    panel.style.width = `${targetW}px`;
-                }, 100);
+                // 애니메이션 실행
+                setTimeout(() => { panel.style.width = `${targetW}px`; }, 100);
 
-                // 2. 타이핑 시작
                 setTimeout(() => {
-                    textEl.classList.add('show');
-                    typeWriter(textEl, typingData[currentPanelIdx % typingData.length]);
-                    currentPanelIdx++;
+                    const lines = panel.querySelectorAll('.fui-line');
+                    lines.forEach((line, idx) => {
+                        setTimeout(() => {
+                            line.classList.add('show');
+                            const targetRest = linesData[idx].slice(1);
+                            typeEffect(line.querySelector('.rest-text'), targetRest);
+                        }, idx * 400);
+                    });
+                    currentIdx++;
                 }, 800);
             }
 
-            function typeWriter(el, text) {
+            function typeEffect(el, text) {
                 let i = 0;
-                el.innerText = '';
                 function type() {
                     if (i < text.length) {
                         el.innerText += text.charAt(i);
                         i++;
-                        setTimeout(type, 40); // 타이핑 속도
+                        setTimeout(type, 30);
                     }
                 }
                 type();
             }
 
-            // 3초마다 박스 갱신
-            setInterval(spawnPanel, 4500); // 등장+타이핑+유지 시간 고려
+            setInterval(spawnPanel, 5000);
 
             video.addEventListener('loadedmetadata', () => { initGrid(); spawnPanel(); });
             window.addEventListener('resize', initGrid);
