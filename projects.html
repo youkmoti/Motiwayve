@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PROJECTS | MOTIWAYVE</title>
+    
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        body, html { margin: 0; padding: 0; width: 100%; background-color: #fff; font-family: 'Pretendard', sans-serif; overflow-x: hidden; }
+
+        /* index.html 헤더 스타일 유지 */
+        header {
+            position: fixed; top: 0; left: 0; width: 100%; height: 60px;
+            background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(15px);
+            display: flex; align-items: center; padding: 0 5%; box-sizing: border-box;
+            z-index: 1000; border-bottom: 1px solid rgb(200, 200, 200); justify-content: space-between;
+        }
+        .header-left { display: flex; align-items: center; text-decoration: none; }
+        .header-logo { height: 20px; margin-right: 8px; }
+        .header-title { font-weight: 700; font-size: 0.95rem; color: #000; letter-spacing: 0.5px; }
+        
+        .back-btn { text-decoration: none; color: #444; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+
+        .container { max-width: 1200px; margin: 120px auto 80px; padding: 0 20px; }
+        
+        /* 그리드 설정: 정사각형 썸네일 */
+        .project-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 15px; 
+        }
+
+        .project-item { 
+            position: relative; 
+            aspect-ratio: 1 / 1; 
+            overflow: hidden; 
+            cursor: pointer; 
+            background: #f7f7f7; 
+        }
+        
+        .project-item img { 
+            width: 100%; height: 100%; 
+            object-fit: cover; 
+            transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        /* 옅은 회색 반투명 오버레이 */
+        .overlay { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(245, 245, 245, 0.85); 
+            display: flex; align-items: center; justify-content: center;
+            opacity: 1; transition: opacity 0.4s ease; padding: 20px; box-sizing: border-box; text-align: center;
+        }
+
+        .project-item:hover img { transform: scale(1.08); }
+        .project-item:hover .overlay { opacity: 0; }
+        
+        .overlay-title { 
+            font-weight: 800; font-size: 0.9rem; color: #000; 
+            line-height: 1.4; word-break: keep-all;
+        }
+
+        /* 모달 (영상 팝업) */
+        .modal { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.9); z-index: 2000; 
+            display: none; align-items: center; justify-content: center; 
+            padding: 20px; box-sizing: border-box; 
+        }
+        
+        .modal-content { 
+            background: #fff; width: 100%; max-width: 1100px; 
+            display: flex; position: relative; max-height: 90vh; animation: modalIn 0.3s ease;
+        }
+        
+        @keyframes modalIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .video-box { flex: 7; background: #000; aspect-ratio: 16 / 9; }
+        .video-box iframe { width: 100%; height: 100%; border: none; }
+        
+        .info-box { flex: 3; padding: 40px; display: flex; flex-direction: column; overflow-y: auto; }
+        .m-title { font-size: 1.3rem; font-weight: 900; margin-bottom: 15px; color: #000; line-height: 1.3; }
+        .m-desc { font-size: 0.9rem; color: #555; line-height: 1.7; white-space: pre-line; }
+        
+        .close-btn { position: absolute; top: -40px; right: 0; color: #fff; font-size: 2rem; cursor: pointer; }
+
+        @media (max-width: 850px) {
+            .modal-content { flex-direction: column; max-height: 95vh; }
+            .info-box { padding: 25px; }
+            .close-btn { top: 10px; right: 15px; color: #000; background: #fff; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="index.html" class="header-left">
+        <img src="logo_header.png" alt="MOTIWAYVE" class="header-logo">
+        <span class="header-title">MOTIWAYVE</span>
+    </a>
+    <a href="javascript:history.back()" class="back-btn"><i class="fas fa-arrow-left"></i> BACK</a>
+</header>
+
+<div class="container">
+    <div class="project-grid" id="grid"></div>
+</div>
+
+<div class="modal" id="modal" onclick="closeModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="close-btn" onclick="closeModal()">&times;</div>
+        <div class="video-box" id="v-box"></div>
+        <div class="info-box">
+            <div class="m-title" id="m-title"></div>
+            <div class="m-desc" id="m-desc"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const projects = [
+        { id: 'HYMYUNd6Xds', title: 'Interiors demo - Real-time 3D Media', desc: 'Photorealistic real-time 3D content created using Unreal Engine.' },
+        { id: 'FDp6cv56Z1A', title: 'Urban Environments - Real-time 3D Media', desc: 'Real-time rendering for architectural visualization and urban planning.' },
+        { id: 'XT028ZnIV5M', title: 'Interactive Art Installation - Virtual Reality', desc: 'Immersive virtual reality experience with interactive elements.' },
+        { id: 'SaVEwhnZLOE', title: 'Augmented Reality Product Showcase', desc: 'Mobile-based AR solution for digital retail and product display.' },
+        { id: 'lZpmAPfaU9E', title: 'New Media Art Highlight (Shorts)', desc: 'Exploring the boundaries between physical and digital spaces.' },
+        { id: 'CqupHhxgjKU', title: 'PROJECT 06', desc: '추가 프로젝트 설명' },
+        { id: 'a0oWcqciP7M', title: 'PROJECT 07', desc: '추가 프로젝트 설명' },
+        { id: 'S7V5TJwX1pU', title: 'PROJECT 08', desc: '추가 프로젝트 설명' },
+        { id: 'PXTBjRPz0LY', title: 'PROJECT 09', desc: '추가 프로젝트 설명' },
+        { id: 'OyqYl6gBwZM', title: 'PROJECT 10', desc: '추가 프로젝트 설명' },
+        { id: 'bWA5UpsK-I4', title: 'PROJECT 11', desc: '추가 프로젝트 설명' },
+        { id: 'E4H6DslJVCM', title: 'PROJECT 12', desc: '추가 프로젝트 설명' },
+        { id: 'sDImX_DkSnw', title: 'PROJECT 13', desc: '추가 프로젝트 설명' },
+        { id: '5-XI_wAUdp8', title: 'PROJECT 14', desc: '추가 프로젝트 설명' },
+        { id: 'Lq-vdPcf8kU', title: 'PROJECT 15', desc: '추가 프로젝트 설명' }
+    ];
+
+    const grid = document.getElementById('grid');
+    const modal = document.getElementById('modal');
+
+    projects.forEach((p, idx) => {
+        const item = document.createElement('div');
+        item.className = 'project-item';
+        item.innerHTML = `
+            <img src="https://img.youtube.com/vi/${p.id}/hqdefault.jpg">
+            <div class="overlay"><div class="overlay-title">${p.title}</div></div>
+        `;
+        item.onclick = () => openModal(idx);
+        grid.appendChild(item);
+    });
+
+    function openModal(idx) {
+        const p = projects[idx];
+        document.getElementById('v-box').innerHTML = `<iframe src="https://www.youtube.com/embed/${p.id}?autoplay=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+        document.getElementById('m-title').innerText = p.title;
+        document.getElementById('m-desc').innerText = p.desc;
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        modal.style.display = 'none';
+        document.getElementById('v-box').innerHTML = '';
+        document.body.style.overflow = 'auto';
+    }
+</script>
+
+</body>
+</html>
