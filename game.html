@@ -3,14 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MOTIWAYVE GAME</title>
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <style>
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #fff; font-family: 'Pretendard', sans-serif; }
-
         #stage { position: relative; width: 100%; height: 100%; background: #fff; cursor: pointer; }
 
-        /* 상단 디스플레이 */
         #display-screen {
             position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
             width: 85%; height: 80px; border: 2px solid #000;
@@ -19,7 +15,6 @@
             letter-spacing: 2px; transition: all 0.2s; background: #fff; z-index: 20;
         }
 
-        /* 캐릭터 */
         #player {
             position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%);
             width: 80px; height: 100px;
@@ -27,18 +22,17 @@
             z-index: 10; transition: bottom 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        /* 흐르는 박스 */
         .project-box {
-            position: absolute; top: 160px; /* 머리에 닿도록 위치 소폭 조정 */
+            position: absolute; 
+            top: 220px; /* 박스 위치를 캐릭터와 더 가깝게 내림 */
             padding: 10px 25px; border: 2px solid #000; background: #fff;
             color: #000; font-size: 1rem; font-weight: 800;
-            white-space: nowrap; pointer-events: none; transition: transform 0.1s;
+            white-space: nowrap; pointer-events: none;
         }
 
         .tap-guide {
             position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
-            color: #888; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px;
-            text-align: center; line-height: 1.5;
+            color: #888; font-size: 0.75rem; font-weight: 600; text-align: center; line-height: 1.5;
         }
     </style>
 </head>
@@ -47,10 +41,7 @@
         <div id="display-screen">TOUCH TO START</div>
         <div id="player"></div>
         <div id="box-lane"></div>
-        <div class="tap-guide">
-            TAP TO JUMP<br>
-            캐릭터를 터치해서 점프해보세요
-        </div>
+        <div class="tap-guide">TAP TO JUMP<br>캐릭터를 터치해서 점프해보세요</div>
     </div>
 
     <script>
@@ -64,7 +55,6 @@
         let boxes = [];
         let frame = 0;
 
-        // 애니메이션 루프
         setInterval(() => {
             if(!isJumping) {
                 player.style.backgroundImage = `url('${runImages[frame]}')`;
@@ -75,7 +65,6 @@
         }, 120);
 
         function initBoxes() {
-            lane.innerHTML = '';
             projects.forEach((name, i) => {
                 const el = document.createElement('div');
                 el.className = 'project-box';
@@ -90,10 +79,11 @@
         function jump() {
             if (isJumping) return;
             isJumping = true;
-            player.style.bottom = '160px'; // 박스 높이에 맞춰 점프
+            // 박스에 닿도록 점프 높이 상향
+            player.style.bottom = '210px'; 
 
             setTimeout(() => {
-                player.style.bottom = '60px'; // 착지
+                player.style.bottom = '60px';
                 setTimeout(() => { isJumping = false; }, 100);
             }, 350);
         }
@@ -101,30 +91,27 @@
         function update() {
             boxes.forEach(box => {
                 box.x -= (window.innerWidth > 768 ? 5 : 4);
-
                 if (box.x < -300) {
                     let rightmostX = Math.max(...boxes.map(b => b.x));
                     let spacing = window.innerWidth > 768 ? 400 : 250;
                     box.x = rightmostX + spacing;
                 }
-
                 box.el.style.left = box.x + 'px';
 
-                // 충돌 감지
                 const pRect = player.getBoundingClientRect();
                 const bRect = box.el.getBoundingClientRect();
 
+                // 판정 범위를 20px 정도 여유 있게 설정 (머리가 근처만 가도 타격)
                 if (isJumping && 
                     pRect.left < bRect.right && pRect.right > bRect.left &&
-                    pRect.top <= bRect.bottom && pRect.bottom > bRect.top) {
+                    pRect.top <= bRect.bottom + 20 && pRect.bottom > bRect.top) {
 
                     screen.innerText = box.name;
                     screen.style.background = "#000";
                     screen.style.color = "#fff";
-
                     box.el.style.background = '#000';
                     box.el.style.color = '#fff';
-                    box.el.style.transform = 'translateY(-10px)';
+                    box.el.style.transform = 'translateY(-15px)';
 
                     setTimeout(() => {
                         screen.style.background = "#fff";
