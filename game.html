@@ -3,42 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOTIWAYVE GAME PANEL</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <style>
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #fff; font-family: 'Pretendard', sans-serif; }
         #stage { position: relative; width: 100%; height: 100%; background: #fff; cursor: pointer; }
 
+        /* 상단 프로젝트 디스플레이 (영역 확장 및 디자인 개선) */
         #display-screen {
-            position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
-            width: 85%; height: 80px; border: 2px solid #000;
-            display: flex; align-items: center; justify-content: center;
-            color: #000; font-size: 1.2rem; font-weight: 800; text-transform: uppercase;
-            letter-spacing: 2px; transition: all 0.2s; background: #fff; z-index: 20;
+            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+            width: 90%; height: 160px; border: 2px solid #000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 15px; box-sizing: border-box;
+            background: #fff; z-index: 20; transition: all 0.3s ease;
         }
+        #display-title { font-size: 1.3rem; font-weight: 800; color: #000; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; }
+        #display-desc { font-size: 0.9rem; color: #444; line-height: 1.5; word-break: keep-all; max-width: 450px; }
 
+        /* 캐릭터 설정 */
         #player {
             position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%);
             width: 80px; height: 100px;
             background-size: contain; background-repeat: no-repeat; background-position: center;
-            z-index: 10; transition: bottom 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 10; transition: bottom 0.25s cubic-bezier(0.215, 0.61, 0.355, 1);
         }
 
+        /* 흐르는 박스 */
         .project-box {
             position: absolute; 
-            top: 220px; /* 박스 위치를 캐릭터와 더 가깝게 내림 */
-            padding: 10px 25px; border: 2px solid #000; background: #fff;
+            top: 200px; /* 고정 위치 */
+            padding: 12px 25px; border: 2px solid #000; background: #fff;
             color: #000; font-size: 1rem; font-weight: 800;
-            white-space: nowrap; pointer-events: none;
+            white-space: nowrap; pointer-events: none; z-index: 5;
+            transition: transform 0.1s, background 0.2s;
         }
 
         .tap-guide {
             position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
-            color: #888; font-size: 0.75rem; font-weight: 600; text-align: center; line-height: 1.5;
+            color: #aaa; font-size: 0.75rem; font-weight: 600; text-align: center; line-height: 1.5;
         }
     </style>
 </head>
 <body onclick="jump()">
     <div id="stage">
-        <div id="display-screen">TOUCH TO START</div>
+        <div id="display-screen">
+            <div id="display-title">TOUCH TO START</div>
+            <div id="display-desc">박스를 점프해서 타격하여 프로젝트 상세 내용을 확인하세요.</div>
+        </div>
         <div id="player"></div>
         <div id="box-lane"></div>
         <div class="tap-guide">TAP TO JUMP<br>캐릭터를 터치해서 점프해보세요</div>
@@ -47,14 +58,25 @@
     <script>
         const player = document.getElementById('player');
         const lane = document.getElementById('box-lane');
-        const screen = document.getElementById('display-screen');
+        const displayTitle = document.getElementById('display-title');
+        const displayDesc = document.getElementById('display-desc');
 
         let isJumping = false;
-        const projects = ['3D MEDIA', 'AR / VR', '2D DESIGN', 'APP', 'GAME'];
+        
+        // 요청하신 데이터 반영
+        const categoryData = {
+            '3D MEDIA': '리얼타임/오프라인 렌더형식으로 리얼하고 아름다운 3D ART 생성합니다.',
+            'AR / VR': '이미지, 좌표, 오브젝트, 공간, 인체등 인식을 바탕으로 증강현실과 체험형 가상현실을 생성합니다.',
+            '2D DESIGN': '다양한 툴로 이미지 및 3D로 컨셉이미지, 공간, 상황, 광고, 제안 등 다양한 2D 작업을 제공합니다.',
+            'APP': '사용자 맞춤 체험형 앱을 생성합니다.',
+            'GAME': '사용자 맞춤 체험형 게임을 생성합니다.'
+        };
+        const projects = Object.keys(categoryData);
         const runImages = ['run_character1.png', 'run_character2.png', 'run_character3.png'];
         let boxes = [];
         let frame = 0;
 
+        // 달리기 애니메이션
         setInterval(() => {
             if(!isJumping) {
                 player.style.backgroundImage = `url('${runImages[frame]}')`;
@@ -69,7 +91,7 @@
                 const el = document.createElement('div');
                 el.className = 'project-box';
                 el.innerText = name;
-                let spacing = window.innerWidth > 768 ? 400 : 250;
+                let spacing = window.innerWidth > 768 ? 400 : 280;
                 let x = window.innerWidth + (i * spacing);
                 lane.appendChild(el);
                 boxes.push({ el, x, name });
@@ -79,13 +101,14 @@
         function jump() {
             if (isJumping) return;
             isJumping = true;
-            // 박스에 닿도록 점프 높이 상향
-            player.style.bottom = '210px'; 
+            
+            // 박스 밑면에 딱 닿도록 높이 조절 (뚫고 올라가지 않게)
+            player.style.bottom = '145px'; 
 
             setTimeout(() => {
                 player.style.bottom = '60px';
                 setTimeout(() => { isJumping = false; }, 100);
-            }, 350);
+            }, 300);
         }
 
         function update() {
@@ -93,33 +116,40 @@
                 box.x -= (window.innerWidth > 768 ? 5 : 4);
                 if (box.x < -300) {
                     let rightmostX = Math.max(...boxes.map(b => b.x));
-                    let spacing = window.innerWidth > 768 ? 400 : 250;
+                    let spacing = window.innerWidth > 768 ? 400 : 280;
                     box.x = rightmostX + spacing;
                 }
                 box.el.style.left = box.x + 'px';
 
+                // 충돌 판정
                 const pRect = player.getBoundingClientRect();
                 const bRect = box.el.getBoundingClientRect();
 
-                // 판정 범위를 20px 정도 여유 있게 설정 (머리가 근처만 가도 타격)
                 if (isJumping && 
                     pRect.left < bRect.right && pRect.right > bRect.left &&
-                    pRect.top <= bRect.bottom + 20 && pRect.bottom > bRect.top) {
+                    pRect.top <= bRect.bottom && pRect.bottom > bRect.top) {
 
-                    screen.innerText = box.name;
-                    screen.style.background = "#000";
-                    screen.style.color = "#fff";
+                    // 상단 디스플레이 업데이트
+                    displayTitle.innerText = box.name;
+                    displayDesc.innerText = categoryData[box.name];
+
+                    // 시각적 피드백
+                    document.getElementById('display-screen').style.background = "#000";
+                    displayTitle.style.color = "#fff";
+                    displayDesc.style.color = "#ccc";
+                    
                     box.el.style.background = '#000';
                     box.el.style.color = '#fff';
-                    box.el.style.transform = 'translateY(-15px)';
+                    box.el.style.transform = 'translateY(-10px)';
 
                     setTimeout(() => {
-                        screen.style.background = "#fff";
-                        screen.style.color = "#000";
+                        document.getElementById('display-screen').style.background = "#fff";
+                        displayTitle.style.color = "#000";
+                        displayDesc.style.color = "#444";
                         box.el.style.background = '#fff';
                         box.el.style.color = '#000';
                         box.el.style.transform = 'translateY(0)';
-                    }, 200);
+                    }, 250);
                 }
             });
             requestAnimationFrame(update);
