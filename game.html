@@ -27,7 +27,7 @@
             transition: transform 0.1s ease-out;
         }
 
-        /* 3. 캐릭터: 버튼과의 거리를 좁히기 위해 위치 유지 및 미세 조정 */
+        /* 3. 캐릭터 */
         #player {
             position: absolute; 
             bottom: 340px; 
@@ -36,7 +36,7 @@
             z-index: 10; transition: bottom 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
 
-        /* 4. 가이드 문구: 캐릭터 발 아래 밀착 */
+        /* 4. 가이드 문구 */
         .tap-guide {
             position: absolute; 
             bottom: 285px; 
@@ -46,10 +46,10 @@
         .tap-guide .en { font-size: 0.7rem; font-weight: 800; display: block; }
         .tap-guide .ko { font-size: 0.75rem; font-weight: 500; display: block; margin-top: 1px; }
 
-        /* 5. 하단 버튼: 캐릭터와 가깝게 대폭 상향 */
+        /* 5. 하단 버튼 */
         .view-all-btn {
             position: absolute; 
-            bottom: 150px; /* 기존 20px에서 150px로 올려 캐릭터와 거리 단축 */
+            bottom: 150px; 
             left: 50%; transform: translateX(-50%);
             width: 90%; max-width: 300px; height: 48px;
             background: #000; color: #fff;
@@ -131,56 +131,88 @@
             });
         }
 
+        // 수직 타격 판정 함수
+        function checkHit() {
+            const pRect = player.getBoundingClientRect();
+            const pCenter = pRect.left + (pRect.width / 2); // 캐릭터의 중앙 X 좌표
+
+            boxes.forEach(box => {
+                const bRect = box.el.getBoundingClientRect();
+                
+                // 캐릭터의 중앙이 박스의 가로 범위(왼쪽~오른쪽) 안에 있는지 확인
+                if (pCenter >= bRect.left && pCenter <= bRect.right) {
+                    if (!box.hit) {
+                        performHitEffect(box);
+                    }
+                }
+            });
+        }
+
+        // 타격 시 연출 함수
+        function performHitEffect(box) {
+            box.hit = true;
+            displayTitle.innerText = box.name;
+            displayDesc.innerText = categoryData[box.name];
+            
+            // 박스 및 화면 색상 변경 연출
+            box.el.style.transform = 'translateY(-25px) scale(1.1)';
+            box.el.style.background = '#000';
+            box.el.style.color = '#fff';
+            displayScreen.style.background = "#000";
+            displayTitle.style.color = "#fff";
+            displayDesc.style.color = "#ccc";
+
+            setTimeout(() => {
+                box.el.style.transform = 'translateY(0) scale(1)';
+                box.el.style.background = '#fff';
+                box.el.style.color = '#000';
+                displayScreen.style.background = "rgb(245, 245, 245)";
+                displayTitle.style.color = "#000";
+                displayDesc.style.color = "#555";
+                
+                // 타격 후 일정 시간 뒤 다시 맞을 수 있게 리셋
+                setTimeout(() => { box.hit = false; }, 600);
+            }, 200);
+        }
+
         function jump() {
             if (isJumping) return;
             isJumping = true;
+            
             const isMobile = window.innerWidth <= 768;
             const baseBottom = isMobile ? 310 : 340;
             const jumpHeight = 110; 
 
+            // 점프 동작 시작
             player.style.bottom = (baseBottom + jumpHeight) + 'px'; 
+
+            // 핵심: 점프하는 시점에 수직 정렬된 박스가 있는지 체크
+            checkHit();
+
             setTimeout(() => {
                 player.style.bottom = baseBottom + 'px';
-                setTimeout(() => { isJumping = false; boxes.forEach(b => b.hit = false); }, 150);
+                setTimeout(() => { 
+                    isJumping = false; 
+                }, 150);
             }, 250);
         }
 
         function update() {
             boxes.forEach(box => {
+                // 박스 이동 속도
                 box.x -= (window.innerWidth > 768 ? 5 : 4);
+                
+                // 화면 밖으로 나간 박스 재배치 (루프)
                 if (box.x < -350) {
                     let rightmostX = Math.max(...boxes.map(b => b.x));
                     let spacing = window.innerWidth > 768 ? 380 : 250;
                     box.x = rightmostX + spacing;
                 }
                 box.el.style.left = box.x + 'px';
-
-                const pRect = player.getBoundingClientRect();
-                const bRect = box.el.getBoundingClientRect();
-
-                if (isJumping && !box.hit && pRect.left < bRect.right && pRect.right > bRect.left && pRect.top <= (bRect.bottom - 15)) {
-                    box.hit = true;
-                    displayTitle.innerText = box.name;
-                    displayDesc.innerText = categoryData[box.name];
-                    box.el.style.transform = 'translateY(-25px) scale(1.1)';
-                    box.el.style.background = '#000';
-                    box.el.style.color = '#fff';
-                    displayScreen.style.background = "#000";
-                    displayTitle.style.color = "#fff";
-                    displayDesc.style.color = "#ccc";
-
-                    setTimeout(() => {
-                        box.el.style.transform = 'translateY(0) scale(1)';
-                        box.el.style.background = '#fff';
-                        box.el.style.color = '#000';
-                        displayScreen.style.background = "rgb(245, 245, 245)";
-                        displayTitle.style.color = "#000";
-                        displayDesc.style.color = "#555";
-                    }, 200);
-                }
             });
             requestAnimationFrame(update);
         }
+
         window.addEventListener('resize', initBoxes);
         initBoxes();
         update();
