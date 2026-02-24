@@ -19,21 +19,20 @@
         #display-title { font-size: 1.3rem; font-weight: 900; color: #000; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 2px; }
         #display-desc { font-size: 0.9rem; color: #555; line-height: 1.5; word-break: keep-all; max-width: 480px; }
 
-        /* 하단 VIEW ALL 버튼: 캐릭터 밑으로 배치 및 크기 확대 */
+        /* 하단 VIEW ALL 버튼: 최하단 배치 */
         .view-all-btn {
             position: absolute; 
-            bottom: 25px; /* 캐릭터 아래쪽 바닥 근처 */
+            bottom: 20px; /* 가장 아래쪽 */
             left: 50%; transform: translateX(-50%);
-            width: 280px; height: 55px; /* 박스보다 큰 사이즈 */
+            width: 280px; height: 55px;
             background: #000; color: #fff;
             display: flex; align-items: center; justify-content: center;
             font-size: 0.9rem; font-weight: 800; letter-spacing: 2px;
             cursor: pointer; z-index: 100; text-decoration: none; border: none;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15); /* 버튼 자체 그림자 */
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
             transition: all 0.3s ease;
         }
         
-        /* 버튼 밑에 깔리는 부드러운 그림자 효과 */
         .view-all-btn::after {
             content: '';
             position: absolute; bottom: -12px; left: 5%; width: 90%; height: 10px;
@@ -46,33 +45,39 @@
             transform: translateX(-50%) translateY(-5px); 
             box-shadow: 0 15px 30px rgba(0,0,0,0.25); 
         }
-        .view-all-btn:hover::after { transform: scale(1.1); opacity: 0.2; }
 
+        /* 캐릭터 위치: 가이드 문구 위로 조정 */
         #player {
             position: absolute; 
-            bottom: 100px; /* 버튼 위쪽으로 위치 조정 */
+            bottom: 120px; /* 가이드(85px)보다 위 */
             left: 50%; transform: translateX(-50%);
             width: 80px; height: 100px; background-size: contain; background-repeat: no-repeat; background-position: center;
             z-index: 10; transition: bottom 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
+        /* 프로젝트 박스: 캐릭터 높이에 맞춤 */
         .project-box {
             position: absolute; 
-            top: 220px; /* 박스들 지나가는 높이 */
+            top: 240px; /* 캐릭터 점프 타격 지점 */
             padding: 12px 25px; border: 2px solid #000; background: #fff;
             color: #000; font-size: 1rem; font-weight: 800; white-space: nowrap; pointer-events: none; z-index: 5;
             transition: transform 0.1s;
         }
 
+        /* 탭 가이드: 캐릭터와 버튼 사이 */
         .tap-guide {
-            position: absolute; bottom: 90px; left: 50%; transform: translateX(-50%);
+            position: absolute; 
+            bottom: 85px; /* 버튼(20px) 위, 캐릭터(120px) 아래 */
+            left: 50%; transform: translateX(-50%);
             color: #ccc; font-size: 0.7rem; font-weight: 600; text-align: center;
         }
 
+        /* 모바일 대응 */
         @media (max-width: 768px) {
-            .view-all-btn { width: 220px; height: 48px; font-size: 0.8rem; bottom: 20px; }
-            #player { bottom: 85px; }
+            .view-all-btn { width: 220px; height: 48px; font-size: 0.8rem; bottom: 15px; }
+            #player { bottom: 110px; }
             .tap-guide { bottom: 75px; }
+            .project-box { top: 220px; }
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -141,10 +146,11 @@
         function jump() {
             if (isJumping) return;
             isJumping = true;
-            // 플레이어 베이스 높이(100px)에서 점프
-            player.style.bottom = '220px'; 
+            // 점프 높이 조정 (기존 대비 상향)
+            const baseBottom = window.innerWidth > 768 ? 120 : 110;
+            player.style.bottom = (baseBottom + 120) + 'px'; 
             setTimeout(() => {
-                player.style.bottom = '100px';
+                player.style.bottom = baseBottom + 'px';
                 setTimeout(() => { isJumping = false; boxes.forEach(b => b.hit = false); }, 100);
             }, 300);
         }
@@ -162,6 +168,7 @@
                 const pRect = player.getBoundingClientRect();
                 const bRect = box.el.getBoundingClientRect();
 
+                // 타격 판정 (높이 조정에 따른 최적화)
                 if (isJumping && !box.hit && pRect.left < bRect.right && pRect.right > bRect.left && pRect.top <= bRect.bottom) {
                     box.hit = true;
                     displayTitle.innerText = box.name;
