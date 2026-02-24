@@ -136,25 +136,31 @@
         }
 
         function jump() {
-            if (isJumping) return;
-            isJumping = true;
-            
-            const isMobile = window.innerWidth <= 768;
-            const baseBottom = isMobile ? 310 : 340;
-            const jumpHeight = 120; // 점프 높이 약간 상향
+    if (isJumping) return;
+    isJumping = true;
+    
+    const isMobile = window.innerWidth <= 768;
+    const baseBottom = isMobile ? 310 : 340;
+    
+    // [수정] 화면 높이에 따라 점프 높이를 유동적으로 결정
+    // PC에서는 화면이 넓으므로 점프를 조금 낮게(90px), 모바일에서는 좁으므로 적당하게(120px)
+    let jumpHeight = isMobile ? 120 : 90;
 
-            player.style.bottom = (baseBottom + jumpHeight) + 'px'; 
+    // 만약 PC에서도 창 높이가 너무 낮다면 더 낮게 조정 (안전장치)
+    if (window.innerHeight < 700) {
+        jumpHeight = isMobile ? 110 : 70;
+    }
 
-            setTimeout(() => {
-                player.style.bottom = baseBottom + 'px';
-                // 점프가 끝나고 완전히 내려온 뒤에 다시 점프 가능하도록 설정
-                setTimeout(() => { 
-                    isJumping = false; 
-                    // 한 번의 점프가 끝나면 모든 박스의 hit 판정 가능 상태로 리셋
-                    boxes.forEach(b => b.hit = false);
-                }, 150);
-            }, 250);
-        }
+    player.style.bottom = (baseBottom + jumpHeight) + 'px'; 
+
+    setTimeout(() => {
+        player.style.bottom = baseBottom + 'px';
+        setTimeout(() => { 
+            isJumping = false; 
+            boxes.forEach(b => b.hit = false);
+        }, 150);
+    }, 250);
+}
 
         function performHit(box) {
             box.hit = true;
@@ -214,3 +220,4 @@
     </script>
 </body>
 </html>
+
