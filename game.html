@@ -4,16 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* 1. 배경을 화이트로 변경 */
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #fff; font-family: sans-serif; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #fff; font-family: 'Pretendard', sans-serif; }
         
         #stage {
             position: relative; width: 100%; height: 100%;
-            background: #fff; /* 화이트 배경 */
+            background: #fff;
             cursor: pointer;
         }
 
-        /* 상단 프로젝트 디스플레이 */
         #display-screen {
             position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
             width: 85%; height: 80px; border: 2px solid #000;
@@ -22,25 +20,24 @@
             letter-spacing: 2px; transition: all 0.2s; background: #fff;
         }
 
-        /* 2. 캐릭터 설정: 화면 가운데 배치 */
         #player {
             position: absolute; 
             bottom: 60px; 
             left: 50%; 
-            transform: translateX(-50%); /* 정확히 가로 중앙 */
-            width: 80px;  /* 이미지 크기에 맞춰 조절하세요 */
+            transform: translateX(-50%);
+            width: 80px; 
             height: 100px; 
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
             z-index: 10;
-            transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            /* 캐릭터가 박스 밑에 붙는 느낌을 위해 부드러운 전환 유지 */
+            transition: bottom 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        /* 흐르는 박스 (블랙 테두리에 화이트 배경) */
         .project-box {
             position: absolute; 
-            top: 180px; /* 캐릭터 머리 위 높이 */
+            top: 170px; /* 박스 위치 고정 */
             padding: 10px 25px;
             border: 2px solid #000; 
             background: #fff;
@@ -53,7 +50,8 @@
 
         .tap-guide {
             position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
-            color: #aaa; font-size: 0.7rem; font-weight: 600; letter-spacing: 1px;
+            color: #888; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px;
+            text-align: center; line-height: 1.5;
         }
     </style>
 </head>
@@ -62,7 +60,10 @@
         <div id="display-screen">TOUCH TO START</div>
         <div id="player"></div>
         <div id="box-lane"></div>
-        <div class="tap-guide">TAP TO JUMP</div>
+        <div class="tap-guide">
+            TAP TO JUMP<br>
+            캐릭터를 터치해서 점프해보세요
+        </div>
     </div>
 
     <script>
@@ -71,24 +72,18 @@
         const screen = document.getElementById('display-screen');
         
         let isJumping = false;
-        const projects = ['AR Content', '3D Media Art', 'Interactive Game', 'VFX Design', 'Digital Twin', 'New Media'];
+        // 요청하신 프로젝트 네임으로 수정
+        const projects = ['3D MEDIA', 'AR / VR', '2D DESIGN', 'APP', 'GAME'];
         let boxes = [];
 
-        // --- 캐릭터 애니메이션 설정 ---
-        const runImages = [
-            'run_character1.png',
-            'run_character2.png',
-            'run_character3.png'
-        ];
+        const runImages = ['run_character1.png', 'run_character2.png', 'run_character3.png'];
         let frame = 0;
 
-        // 0.1초마다 캐릭터 다리 움직임 (루프)
         setInterval(() => {
-            if(!isJumping) { // 점프 중이 아닐 때만 달리기 동작
+            if(!isJumping) {
                 player.style.backgroundImage = `url('${runImages[frame]}')`;
                 frame = (frame + 1) % runImages.length;
             } else {
-                // 점프 중에는 특정 프레임 고정 (예: 2번 프레임)
                 player.style.backgroundImage = `url('${runImages[1]}')`;
             }
         }, 120);
@@ -98,7 +93,7 @@
                 const el = document.createElement('div');
                 el.className = 'project-box';
                 el.innerText = name;
-                let spacing = window.innerWidth > 768 ? 350 : 250;
+                let spacing = window.innerWidth > 768 ? 400 : 250;
                 let x = window.innerWidth + (i * spacing);
                 lane.appendChild(el);
                 boxes.push({ el, x, name });
@@ -108,33 +103,35 @@
         function jump() {
             if (isJumping) return;
             isJumping = true;
-            player.style.bottom = '180px'; // 박스 타격 높이
+            
+            // 박스 밑면 높이에 맞춰 캐릭터가 딱 붙게 조절 (기존 180 -> 150)
+            player.style.bottom = '150px'; 
             
             setTimeout(() => {
-                player.style.bottom = '60px'; // 착지
+                player.style.bottom = '60px';
                 isJumping = false;
-            }, 400);
+            }, 350);
         }
 
         function update() {
             boxes.forEach(box => {
-                box.x -= (window.innerWidth > 768 ? 5 : 4); // 박스 흐르는 속도
+                box.x -= (window.innerWidth > 768 ? 5 : 4);
                 
                 if (box.x < -300) {
                     let rightmostX = Math.max(...boxes.map(b => b.x));
-                    let spacing = window.innerWidth > 768 ? 350 : 250;
+                    let spacing = window.innerWidth > 768 ? 400 : 250;
                     box.x = rightmostX + spacing;
                 }
                 
                 box.el.style.left = box.x + 'px';
 
-                // 충돌 감지 (중앙에 있는 캐릭터와 박스가 만나는지 확인)
                 const pRect = player.getBoundingClientRect();
                 const bRect = box.el.getBoundingClientRect();
 
+                // 충돌 판정: 캐릭터가 점프 중이고 박스 범위 내에 있을 때
                 if (isJumping && 
                     pRect.left < bRect.right && pRect.right > bRect.left &&
-                    pRect.top < bRect.bottom && pRect.bottom > bRect.top) {
+                    pRect.top <= bRect.bottom && pRect.bottom > bRect.top) {
                     
                     screen.innerText = box.name;
                     screen.style.background = "#000";
@@ -142,12 +139,15 @@
                     
                     box.el.style.background = '#000';
                     box.el.style.color = '#fff';
+                    // 박스가 머리에 맞았을 때 살짝 위로 튕기는 효과
+                    box.el.style.transform = 'translateY(-10px)';
 
                     setTimeout(() => {
                         screen.style.background = "#fff";
                         screen.style.color = "#000";
                         box.el.style.background = '#fff';
                         box.el.style.color = '#000';
+                        box.el.style.transform = 'translateY(0)';
                     }, 200);
                 }
             });
