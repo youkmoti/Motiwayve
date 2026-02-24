@@ -3,111 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MOTIWAYVE GAME PANEL</title>
+    <title>MOTIWAYVE GAME</title>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Pretendard', sans-serif; color: #fff; }
-        
-        /* 상단 디스플레이 패널 */
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #fff; font-family: 'Pretendard', sans-serif; }
+
+        #stage { position: relative; width: 100%; height: 100%; background: #fff; cursor: pointer; }
+
+        /* 상단 디스플레이 */
         #display-screen {
-            position: absolute; top: 10%; left: 50%; transform: translateX(-50%);
-            width: 80%; max-width: 600px; height: 120px;
-            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; padding: 20px; backdrop-filter: blur(10px); z-index: 10;
-        }
-        #category-title { font-size: 1.4rem; font-weight: 800; color: #fff; margin-bottom: 8px; letter-spacing: 2px; }
-        #category-desc { font-size: 0.9rem; color: #aaa; line-height: 1.4; word-break: keep-all; }
-
-        /* 박스 영역: 캐릭터 머리 높이에 맞게 하단으로 배치 */
-        #game-canvas {
-            width: 100%; height: 100%; display: flex; 
-            align-items: flex-end; /* 바닥 기준 정렬 */
-            justify-content: center;
-            padding-bottom: 220px; /* 바닥에서부터 박스의 높이 (캐릭터 점프 높이에 맞춰 조절) */
-            box-sizing: border-box;
-        }
-        
-        .target-box {
-            width: 80px; height: 80px; background: #fff; display: flex; align-items: center; justify-content: center;
-            color: #000; font-weight: 900; cursor: pointer; 
-            margin: 0 10px; border-radius: 4px;
-            transition: transform 0.1s;
-            position: relative;
+            position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
+            width: 85%; height: 80px; border: 2px solid #000;
+            display: flex; align-items: center; justify-content: center;
+            color: #000; font-size: 1.2rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 2px; transition: all 0.2s; background: #fff; z-index: 20;
         }
 
-        /* 타격 시 위로 튕기는 애니메이션 */
-        .target-box.hit { animation: boxHit 0.2s ease-out; }
-        @keyframes boxHit {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-            100% { transform: translateY(0); }
+        /* 캐릭터 */
+        #player {
+            position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%);
+            width: 80px; height: 100px;
+            background-size: contain; background-repeat: no-repeat; background-position: center;
+            z-index: 10; transition: bottom 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        /* 하단 VIEW ALL 버튼 */
-        #view-all-btn {
-            position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%);
-            padding: 12px 40px; background: #fff; color: #000; font-weight: 700;
-            text-decoration: none; border-radius: 50px; font-size: 0.9rem;
-            display: none; transition: all 0.3s; cursor: pointer; border: none; z-index: 10;
+        /* 흐르는 박스 */
+        .project-box {
+            position: absolute; top: 160px; /* 머리에 닿도록 위치 소폭 조정 */
+            padding: 10px 25px; border: 2px solid #000; background: #fff;
+            color: #000; font-size: 1rem; font-weight: 800;
+            white-space: nowrap; pointer-events: none; transition: transform 0.1s;
         }
-        #view-all-btn:hover { background: #ccc; transform: translateX(-50%) translateY(-3px); }
 
-        @media (max-width: 768px) {
-            #game-canvas { padding-bottom: 180px; } /* 모바일 점프 높이에 맞춰 조정 */
-            #category-title { font-size: 1.1rem; }
-            #category-desc { font-size: 0.8rem; }
-            .target-box { width: 60px; height: 60px; font-size: 0.8rem; }
+        .tap-guide {
+            position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
+            color: #888; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px;
+            text-align: center; line-height: 1.5;
         }
     </style>
 </head>
-<body>
-
-    <div id="display-screen">
-        <div id="category-title">SELECT CATEGORY</div>
-        <div id="category-desc">박스를 타격하여 포트폴리오 카테고리를 확인하세요.</div>
+<body onclick="jump()">
+    <div id="stage">
+        <div id="display-screen">TOUCH TO START</div>
+        <div id="player"></div>
+        <div id="box-lane"></div>
+        <div class="tap-guide">
+            TAP TO JUMP<br>
+            캐릭터를 터치해서 점프해보세요
+        </div>
     </div>
-
-    <div id="game-canvas">
-        <div class="target-box" onclick="updateInfo('3D MEDIA', this)">3D</div>
-        <div class="target-box" onclick="updateInfo('AR / VR', this)">XR</div>
-        <div class="target-box" onclick="updateInfo('2D DESIGN', this)">2D</div>
-        <div class="target-box" onclick="updateInfo('APP / GAME', this)">APP</div>
-    </div>
-
-    <button id="view-all-btn" onclick="goToProjects()">VIEW ALL PROJECTS</button>
 
     <script>
-        const categoryData = {
-            '3D MEDIA': '리얼타임/오프라인 렌더형식의 3D ART',
-            'AR / VR': '증강현실 및 체험형 가상현실 콘텐츠',
-            '2D DESIGN': '컨셉이미지, 광고, 제안 등 다양한 2D 작업',
-            'APP / GAME': '사용자 맞춤 체험형 앱 및 게임 제작'
-        };
+        const player = document.getElementById('player');
+        const lane = document.getElementById('box-lane');
+        const screen = document.getElementById('display-screen');
 
-        function updateInfo(category, element) {
-            const titleEl = document.getElementById('category-title');
-            const descEl = document.getElementById('category-desc');
-            const btn = document.getElementById('view-all-btn');
+        let isJumping = false;
+        const projects = ['3D MEDIA', 'AR / VR', '2D DESIGN', 'APP', 'GAME'];
+        const runImages = ['run_character1.png', 'run_character2.png', 'run_character3.png'];
+        let boxes = [];
+        let frame = 0;
 
-            // 텍스트 업데이트
-            titleEl.innerText = category;
-            descEl.innerText = categoryData[category];
+        // 애니메이션 루프
+        setInterval(() => {
+            if(!isJumping) {
+                player.style.backgroundImage = `url('${runImages[frame]}')`;
+                frame = (frame + 1) % runImages.length;
+            } else {
+                player.style.backgroundImage = `url('${runImages[1]}')`;
+            }
+        }, 120);
 
-            // 버튼 노출
-            btn.style.display = 'block';
-
-            // 타격 애니메이션 적용
-            element.classList.remove('hit');
-            void element.offsetWidth; // 리플로우 강제 발생 (애니메이션 재시작용)
-            element.classList.add('hit');
-            
-            console.log(category + " 타격됨");
+        function initBoxes() {
+            lane.innerHTML = '';
+            projects.forEach((name, i) => {
+                const el = document.createElement('div');
+                el.className = 'project-box';
+                el.innerText = name;
+                let spacing = window.innerWidth > 768 ? 400 : 250;
+                let x = window.innerWidth + (i * spacing);
+                lane.appendChild(el);
+                boxes.push({ el, x, name });
+            });
         }
 
-        function goToProjects() {
-            window.parent.location.href = 'projects_detail.html';
+        function jump() {
+            if (isJumping) return;
+            isJumping = true;
+            player.style.bottom = '160px'; // 박스 높이에 맞춰 점프
+
+            setTimeout(() => {
+                player.style.bottom = '60px'; // 착지
+                setTimeout(() => { isJumping = false; }, 100);
+            }, 350);
         }
+
+        function update() {
+            boxes.forEach(box => {
+                box.x -= (window.innerWidth > 768 ? 5 : 4);
+
+                if (box.x < -300) {
+                    let rightmostX = Math.max(...boxes.map(b => b.x));
+                    let spacing = window.innerWidth > 768 ? 400 : 250;
+                    box.x = rightmostX + spacing;
+                }
+
+                box.el.style.left = box.x + 'px';
+
+                // 충돌 감지
+                const pRect = player.getBoundingClientRect();
+                const bRect = box.el.getBoundingClientRect();
+
+                if (isJumping && 
+                    pRect.left < bRect.right && pRect.right > bRect.left &&
+                    pRect.top <= bRect.bottom && pRect.bottom > bRect.top) {
+
+                    screen.innerText = box.name;
+                    screen.style.background = "#000";
+                    screen.style.color = "#fff";
+
+                    box.el.style.background = '#000';
+                    box.el.style.color = '#fff';
+                    box.el.style.transform = 'translateY(-10px)';
+
+                    setTimeout(() => {
+                        screen.style.background = "#fff";
+                        screen.style.color = "#000";
+                        box.el.style.background = '#fff';
+                        box.el.style.color = '#000';
+                        box.el.style.transform = 'translateY(0)';
+                    }, 200);
+                }
+            });
+            requestAnimationFrame(update);
+        }
+
+        initBoxes();
+        update();
     </script>
 </body>
 </html>
