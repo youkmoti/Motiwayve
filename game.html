@@ -14,9 +14,10 @@
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             text-align: center; padding: 10px; box-sizing: border-box;
             background: rgb(245, 245, 245); z-index: 20;
+            transition: background 0.2s;
         }
-        #display-title { font-size: 1.1rem; font-weight: 900; color: #000; margin-bottom: 5px; text-transform: uppercase; }
-        #display-desc { font-size: 0.8rem; color: #555; line-height: 1.4; word-break: keep-all; max-width: 450px; }
+        #display-title { font-size: 1.1rem; font-weight: 900; color: #000; margin-bottom: 5px; text-transform: uppercase; transition: color 0.2s; }
+        #display-desc { font-size: 0.8rem; color: #555; line-height: 1.4; word-break: keep-all; max-width: 450px; transition: color 0.2s; }
 
         /* 2. 움직이는 박스 */
         .project-box {
@@ -24,7 +25,7 @@
             top: 150px; 
             padding: 8px 22px; border: 2px solid #000; background: #fff;
             color: #000; font-size: 0.85rem; font-weight: 800; white-space: nowrap; pointer-events: none; z-index: 5;
-            transition: transform 0.1s ease-out;
+            transition: transform 0.1s ease-out, background 0.2s, color 0.2s;
         }
 
         /* 3. 캐릭터 */
@@ -33,7 +34,7 @@
             bottom: 340px; 
             left: 50%; transform: translateX(-50%);
             width: 65px; height: 85px; background-size: contain; background-repeat: no-repeat; background-position: center;
-            z-index: 10; transition: bottom 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+            z-index: 10; transition: bottom 0.25s cubic-bezier(0.215, 0.61, 0.355, 1);
         }
 
         /* 4. 가이드 문구 */
@@ -110,11 +111,14 @@
             window.parent.location.href = 'projects.html';
         }
 
+        // 애니메이션 루프
         setInterval(() => {
             if(!isJumping) {
                 player.style.backgroundImage = `url('${runImages[frame]}')`;
                 frame = (frame + 1) % runImages.length;
-            } else { player.style.backgroundImage = `url('${runImages[1]}')`; }
+            } else { 
+                player.style.backgroundImage = `url('${runImages[1]}')`; 
+            }
         }, 120);
 
         function initBoxes() {
@@ -131,31 +135,34 @@
             });
         }
 
-        // 수직 타격 판정 함수
-        function checkHit() {
-            const pRect = player.getBoundingClientRect();
-            const pCenter = pRect.left + (pRect.width / 2); // 캐릭터의 중앙 X 좌표
+        function jump() {
+            if (isJumping) return;
+            isJumping = true;
+            
+            const isMobile = window.innerWidth <= 768;
+            const baseBottom = isMobile ? 310 : 340;
+            const jumpHeight = 120; // 점프 높이 약간 상향
 
-            boxes.forEach(box => {
-                const bRect = box.el.getBoundingClientRect();
-                
-                // 캐릭터의 중앙이 박스의 가로 범위(왼쪽~오른쪽) 안에 있는지 확인
-                if (pCenter >= bRect.left && pCenter <= bRect.right) {
-                    if (!box.hit) {
-                        performHitEffect(box);
-                    }
-                }
-            });
+            player.style.bottom = (baseBottom + jumpHeight) + 'px'; 
+
+            setTimeout(() => {
+                player.style.bottom = baseBottom + 'px';
+                // 점프가 끝나고 완전히 내려온 뒤에 다시 점프 가능하도록 설정
+                setTimeout(() => { 
+                    isJumping = false; 
+                    // 한 번의 점프가 끝나면 모든 박스의 hit 판정 가능 상태로 리셋
+                    boxes.forEach(b => b.hit = false);
+                }, 150);
+            }, 250);
         }
 
-        // 타격 시 연출 함수
-        function performHitEffect(box) {
+        function performHit(box) {
             box.hit = true;
             displayTitle.innerText = box.name;
             displayDesc.innerText = categoryData[box.name];
             
-            // 박스 및 화면 색상 변경 연출
-            box.el.style.transform = 'translateY(-25px) scale(1.1)';
+            // 타격 효과
+            box.el.style.transform = 'translateY(-20px) scale(1.05)';
             box.el.style.background = '#000';
             box.el.style.color = '#fff';
             displayScreen.style.background = "#000";
@@ -169,46 +176,34 @@
                 displayScreen.style.background = "rgb(245, 245, 245)";
                 displayTitle.style.color = "#000";
                 displayDesc.style.color = "#555";
-                
-                // 타격 후 일정 시간 뒤 다시 맞을 수 있게 리셋
-                setTimeout(() => { box.hit = false; }, 600);
             }, 200);
         }
 
-        function jump() {
-            if (isJumping) return;
-            isJumping = true;
-            
-            const isMobile = window.innerWidth <= 768;
-            const baseBottom = isMobile ? 310 : 340;
-            const jumpHeight = 110; 
-
-            // 점프 동작 시작
-            player.style.bottom = (baseBottom + jumpHeight) + 'px'; 
-
-            // 핵심: 점프하는 시점에 수직 정렬된 박스가 있는지 체크
-            checkHit();
-
-            setTimeout(() => {
-                player.style.bottom = baseBottom + 'px';
-                setTimeout(() => { 
-                    isJumping = false; 
-                }, 150);
-            }, 250);
-        }
-
         function update() {
+            const pRect = player.getBoundingClientRect();
+            
             boxes.forEach(box => {
-                // 박스 이동 속도
+                // 1. 박스 이동 로직
                 box.x -= (window.innerWidth > 768 ? 5 : 4);
-                
-                // 화면 밖으로 나간 박스 재배치 (루프)
                 if (box.x < -350) {
                     let rightmostX = Math.max(...boxes.map(b => b.x));
                     let spacing = window.innerWidth > 768 ? 380 : 250;
                     box.x = rightmostX + spacing;
                 }
                 box.el.style.left = box.x + 'px';
+
+                // 2. 실시간 물리 판정 로직
+                const bRect = box.el.getBoundingClientRect();
+
+                // 가로 범위 판정: 캐릭터 좌우 폭이 박스 범위 내에 있는지
+                const isWithinX = pRect.left < bRect.right - 15 && pRect.right > bRect.left + 15;
+                // 세로 범위 판정: 캐릭터 머리(top)가 박스 하단(bottom)보다 높이(수치상 작게) 올라갔는지
+                // +30px의 여유를 주어 인앱 브라우저 오차 완벽 대응
+                const isWithinY = pRect.top <= bRect.bottom + 30;
+
+                if (isJumping && !box.hit && isWithinX && isWithinY) {
+                    performHit(box);
+                }
             });
             requestAnimationFrame(update);
         }
