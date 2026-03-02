@@ -21,7 +21,8 @@
         .project-grid { 
             display: grid; 
             grid-template-columns: repeat(4, 1fr); /* 기본 4열 */
-            gap: 10px; 
+            /* 1-1. 썸네일 간격 축소: 2px */
+            gap: 2px; 
         }
         
         @media (max-width: 1024px) {
@@ -35,10 +36,11 @@
         .project-item { position: relative; aspect-ratio: 1 / 1; overflow: hidden; cursor: pointer; background: #eee; border: 1px solid #eee; }
         .project-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1); display: block; }
         
-        /* 2. 오버레이 수정: 블랙 반투명으로 변경 */
+        /* 2. 오버레이 수정: 요청하신 색상(#93b2dd)에 반투명 적용 */
         .overlay { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0, 0, 0, 0.7); /* 블랙 반투명 */
+            /* #93b2dd 색상을 RGBA로 변환 후 오파시티 0.7(70%) 적용 */
+            background: rgba(147, 178, 221, 0.7); 
             display: flex; align-items: center; justify-content: center; 
             opacity: 1; transition: opacity 0.3s ease; padding: 20px; box-sizing: border-box; text-align: center; 
         }
@@ -46,15 +48,17 @@
         .project-item:hover img { transform: scale(1.08); }
         .project-item:hover .overlay { opacity: 0; }
         
-        /* 3. 오버레이 텍스트: 화이트로 변경 */
+        /* 3. 오버레이 텍스트 수정 */
         .overlay-title { 
-            font-weight: 500; 
-            font-size: 0.9rem; /* 4열 정렬을 고려하여 크기 미세 조정 */
-            color: #fff; /* 텍스트 화이트 */
+            font-weight: 600; /* 가독성을 위해 두께 약간 상향 */
+            font-size: 0.95rem; 
+            color: #fff; /* 텍스트 화이트 유지 */
             line-height: 1.3; 
             word-break: keep-all; 
             text-transform: uppercase; 
-            letter-spacing: -0.5px;
+            letter-spacing: -0.1px;
+            /* 3-1. 텍스트 그림자 추가: 아주 흐리게(오파시티 30%) */
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); 
         }
 
         /* 모달 스타일 유지 */
@@ -106,12 +110,13 @@
 </div>
 
 <script>
+    // 데이터 및 스크립트 로직 유지
     const projects = [
         { id: 'HYMYUNd6Xds', title: 'Interiors demo - Real-time 3D Media', desc: 'Photorealistic real-time 3D content created using Unreal Engine.' },
         { id: 'sDImX_DkSnw', title: 'DUDURIA AR Picture Book', desc: 'English and Korean AR picture books featuring dinosaur and animal series with independent character storylines.' },
         { id: 'S7V5TJwX1pU', title: 'Celadon Art Projection Mapping: Media Facade', desc: 'A media facade project for the Gangjin Celadon Museum, featuring celadon-themed media art created using projection mapping.' },
         { id: 'a0oWcqciP7M', title: 'Hyeonbiam Media Art Proposal Video', desc: 'A cliff-rock media art proposal video created in collaboration with INI.' },
-        { id: 'Lq-vdPcf8kU', title: 'Drone Commander', desc: 'A human-recognition-based AR service exhibited at the Seoul Design Festival 2022.' }, // 쉼표 누락 수정
+        { id: 'Lq-vdPcf8kU', title: 'Drone Commander', desc: 'A human-recognition-based AR service exhibited at the Seoul Design Festival 2022.' },
         { id: 'lZpmAPfaU9E', title: 'AR Concert Experience Content', desc: 'An AR orchestra experience for people with disabilities, created in collaboration with the non-profit organization YeWoo.' },
         { id: 'FDp6cv56Z1A', title: 'Rucy : road to hell - Real-time 3D Media', desc: 'Photorealistic real-time 3D content created using Unreal Engine.' },
         { id: 'XT028ZnIV5M', title: 'Jangheung Jeongnamjin Museum Content3', desc: 'Provides AR and interactive media content for children, developed in collaboration with INI.' },
