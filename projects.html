@@ -15,55 +15,59 @@
         .header-title { font-weight: 700; font-size: 0.95rem; color: #000; letter-spacing: 0.5px; text-transform: uppercase; }
         .back-btn { text-decoration: none; color: #444; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 5px; }
 
-        .container { max-width: 1200px; margin: 120px auto 80px; padding: 0 20px; }
-        .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; }
+        .container { max-width: 1400px; margin: 120px auto 80px; padding: 0 20px; }
+
+        /* 1. 정렬 수정: PC 4열, 모바일 최소 2열 유지 */
+        .project-grid { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); /* 기본 4열 */
+            gap: 10px; 
+        }
         
+        @media (max-width: 1024px) {
+            .project-grid { grid-template-columns: repeat(3, 1fr); } /* 태블릿 3열 */
+        }
+
+        @media (max-width: 600px) {
+            .project-grid { grid-template-columns: repeat(2, 1fr); } /* 모바일 최소 2열 고정 */
+        }
+
         .project-item { position: relative; aspect-ratio: 1 / 1; overflow: hidden; cursor: pointer; background: #eee; border: 1px solid #eee; }
         .project-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1); display: block; }
         
-        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.9); display: flex; align-items: center; justify-content: center; opacity: 1; transition: opacity 0.3s ease; padding: 30px; box-sizing: border-box; text-align: center; }
+        /* 2. 오버레이 수정: 블랙 반투명으로 변경 */
+        .overlay { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0, 0, 0, 0.7); /* 블랙 반투명 */
+            display: flex; align-items: center; justify-content: center; 
+            opacity: 1; transition: opacity 0.3s ease; padding: 20px; box-sizing: border-box; text-align: center; 
+        }
+        
         .project-item:hover img { transform: scale(1.08); }
         .project-item:hover .overlay { opacity: 0; }
         
-        /* 1. 썸네일 제목: 크기를 약 2배로 키우고 두께를 Medium(500)으로 조정 */
+        /* 3. 오버레이 텍스트: 화이트로 변경 */
         .overlay-title { 
             font-weight: 500; 
-            font-size: 1.0rem; 
-            color: #000; 
+            font-size: 0.9rem; /* 4열 정렬을 고려하여 크기 미세 조정 */
+            color: #fff; /* 텍스트 화이트 */
             line-height: 1.3; 
             word-break: keep-all; 
             text-transform: uppercase; 
             letter-spacing: -0.5px;
         }
 
+        /* 모달 스타일 유지 */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
         .modal-content { background: #fff; width: 100%; max-width: 1100px; display: flex; position: relative; max-height: 90vh; animation: modalIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes modalIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         
         .video-box { flex: 7; background: #000; aspect-ratio: 16 / 9; }
         .video-box iframe { width: 100%; height: 100%; border: none; }
-        
         .info-box { flex: 3; padding: 45px 35px; display: flex; flex-direction: column; overflow-y: auto; background: #fff; }
         
-        /* 2. 모달 제목: 두께를 SemiBold(600)로 조정 */
-        .m-title { 
-            font-size: 1.5rem; 
-            font-weight: 600; 
-            margin-bottom: 18px; 
-            color: #000; 
-            line-height: 1.3; 
-            text-transform: uppercase; 
-            letter-spacing: 0.5px; 
-        }
-        
-        .m-desc { 
-            font-size: 0.85rem; 
-            color: #666; 
-            line-height: 1.8; 
-            white-space: pre-line; 
-            font-weight: 400;
-            letter-spacing: 0.2px;
-        }
+        .m-title { font-size: 1.5rem; font-weight: 600; margin-bottom: 18px; color: #000; line-height: 1.3; text-transform: uppercase; letter-spacing: 0.5px; }
+        .m-desc { font-size: 0.85rem; color: #666; line-height: 1.8; white-space: pre-line; font-weight: 400; letter-spacing: 0.2px; }
 
         .close-btn { position: absolute; top: -45px; right: 0; color: #fff; font-size: 2.5rem; cursor: pointer; transition: transform 0.2s; }
         .close-btn:hover { transform: rotate(90deg); }
@@ -71,9 +75,8 @@
         @media (max-width: 850px) { 
             .modal-content { flex-direction: column; max-height: 95vh; } 
             .info-box { padding: 30px 20px; } 
-            .overlay-title { font-size: 1.2rem; } /* 모바일에서 너무 크지 않게 조정 */
+            .overlay-title { font-size: 0.85rem; }
             .m-title { font-size: 1.2rem; margin-bottom: 12px; }
-            .m-desc { font-size: 0.8rem; }
             .close-btn { top: 10px; right: 15px; color: #000; background: #fff; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: 0 5px 15px rgba(0,0,0,0.2); } 
         }
     </style>
@@ -105,20 +108,20 @@
 <script>
     const projects = [
         { id: 'HYMYUNd6Xds', title: 'Interiors demo - Real-time 3D Media', desc: 'Photorealistic real-time 3D content created using Unreal Engine.' },
+        { id: 'sDImX_DkSnw', title: 'DUDURIA AR Picture Book', desc: 'English and Korean AR picture books featuring dinosaur and animal series with independent character storylines.' },
+        { id: 'S7V5TJwX1pU', title: 'Celadon Art Projection Mapping: Media Facade', desc: 'A media facade project for the Gangjin Celadon Museum, featuring celadon-themed media art created using projection mapping.' },
+        { id: 'a0oWcqciP7M', title: 'Hyeonbiam Media Art Proposal Video', desc: 'A cliff-rock media art proposal video created in collaboration with INI.' },
+        { id: 'Lq-vdPcf8kU', title: 'Drone Commander', desc: 'A human-recognition-based AR service exhibited at the Seoul Design Festival 2022.' }, // 쉼표 누락 수정
+        { id: 'lZpmAPfaU9E', title: 'AR Concert Experience Content', desc: 'An AR orchestra experience for people with disabilities, created in collaboration with the non-profit organization YeWoo.' },
         { id: 'FDp6cv56Z1A', title: 'Rucy : road to hell - Real-time 3D Media', desc: 'Photorealistic real-time 3D content created using Unreal Engine.' },
         { id: 'XT028ZnIV5M', title: 'Jangheung Jeongnamjin Museum Content3', desc: 'Provides AR and interactive media content for children, developed in collaboration with INI.' },
         { id: 'SaVEwhnZLOE', title: 'Jangheung Jeongnamjin Museum Content2', desc: 'Provides AR and interactive media content for children, developed in collaboration with INI.' },
-        { id: 'lZpmAPfaU9E', title: 'AR Concert Experience Content', desc: 'An AR orchestra experience for people with disabilities, created in collaboration with the non-profit organization YeWoo.' },
         { id: 'CqupHhxgjKU', title: 'Jangheung Jeongnamjin Museum Content1', desc: 'Provides AR and interactive media content for children, developed in collaboration with INI.' },
-        { id: 'a0oWcqciP7M', title: 'Hyeonbiam Media Art Proposal Video', desc: 'A cliff-rock media art proposal video created in collaboration with INI.' },
-        { id: 'S7V5TJwX1pU', title: 'Celadon Art Projection Mapping: Media Facade', desc: 'A media facade project for the Gangjin Celadon Museum, featuring celadon-themed media art created using projection mapping.' },
+        { id: 'E4H6DslJVCM', title: 'Next Step AR', desc: 'Participated in the 2022 Korea Stamp Museum event, featuring NFT-based artworks and AR experiences for the 100th anniversary commemorative stamps.' }, 
         { id: 'PXTBjRPz0LY', title: 'SDF 2021 Young Designer Selection', desc: 'Selected as a Young Designer for the Seoul Design Festival 2021, featuring an invitation-only AR educational puzzle system.' },
         { id: 'OyqYl6gBwZM', title: 'YB House', desc: 'A virtual exhibition system for artists, demonstrated at Gallery Knot.' },
         { id: 'bWA5UpsK-I4', title: 'MGAR', desc: 'An AR educational service created in collaboration with Morning Glory, developed as puzzles and picture books.' },
-        { id: 'E4H6DslJVCM', title: 'Next Step AR', desc: 'Participated in the 2022 Korea Stamp Museum event, featuring NFT-based artworks and AR experiences for the 100th anniversary commemorative stamps.' },
-        { id: 'sDImX_DkSnw', title: 'DUDURIA AR Picture Book', desc: 'English and Korean AR picture books featuring dinosaur and animal series with independent character storylines.' },
-        { id: '5-XI_wAUdp8', title: "Jesse's Diary", desc: 'An augmented reality service integrated with theater, collaborated with DAAT and Isulgil.' },
-        { id: 'Lq-vdPcf8kU', title: 'Drone Commander', desc: 'A human-recognition-based AR service exhibited at the Seoul Design Festival 2022.' }
+        { id: '5-XI_wAUdp8', title: "Jesse's Diary", desc: 'An augmented reality service integrated with theater, collaborated with DAAT and Isulgil.' }
     ];
 
     const grid = document.getElementById('grid');
@@ -152,4 +155,3 @@
 </script>
 </body>
 </html>
-
